@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BD BUSINESS PRO</title>
+<style>
+body{margin:0;font-family:Arial;background:#f1f8f3;color:#17452d}
+header{background:#14633c;color:white;padding:22px}
+main{padding:20px}
+.hero{background:#dcefe2;padding:35px 15px;text-align:center;border-radius:12px}
+.card{background:white;padding:18px;margin-top:15px;border-radius:12px}
+button{background:#16834d;color:white;border:0;padding:12px 20px;border-radius:7px}
+footer{background:#145333;color:white;text-align:center;padding:20px;margin-top:25px}
+</style>
+</head>
+<body>
+<header>
+<h2>🌿 BD BUSINESS PRO</h2>
+<p>REAL BUSINESS • TRANSPARENT REPORTS</p>
+</header>
+<main>
+<section class="hero">
+<h1>আপনার ব্যবসা, আপনার ভবিষ্যৎ</h1>
+<p>বাস্তব ছোট ব্যবসার তথ্য ও পরিকল্পনা দেখুন।</p>
+</section>
+<div class="card">
+<h3>🛒 মুদি দোকান</h3>
+<p>ছোট ব্যবসার পরিকল্পনা ও অগ্রগতি।</p>
+</div>
+<div class="card">
+<h3>👕 কাপড়ের দোকান</h3>
+<p>পোশাক ব্যবসার পরিকল্পনা ও তথ্য।</p>
+</div>
+<div class="card">
+<h3>📦 অনলাইন পণ্য</h3>
+<p>অনলাইন ব্যবসার পরিকল্পনা ও তথ্য।</p>
+</div>
+<div class="card">
+<strong>গুরুত্বপূর্ণ:</strong>
+<p>এটিএটিো ওয়েবসাইট। এখানে প্রকৃত টাকা জমা, বিনিয়োগ বা উত্তোলন করা যায়।</p>
+</div>
+</main>
+<footer>© 2026 BD BUSINESS PRO</footer>
+</body>
+</html>
