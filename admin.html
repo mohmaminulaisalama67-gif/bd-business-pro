@@ -1,1 +1,91 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MR9PRO Admin</title>
+<style>
+body{margin:0;background:#eef2f7;font-family:Arial}
+header{background:#101d38;color:white;text-align:center;padding:22px}
+header h1{color:#00e6a0}
+.container{max-width:800px;margin:20px auto;padding:12px}
+.card{background:white;padding:20px;border-radius:12px;margin:15px 0}
+input{width:100%;padding:13px;margin:8px 0;box-sizing:border-box}
+button{background:#008b68;color:white;border:0;padding:12px;border-radius:7px;cursor:pointer}
+.hidden{display:none}
+.stat{background:#e3fff0;padding:15px;margin:10px 0;border-radius:8px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>MR9PRO</h1>
+<p>ADMIN CONTROL PANEL</p>
+</header>
+
+<div class="container">
+
+<div id="login" class="card">
+<h2>Admin Login</h2>
+<input id="email" type="email" placeholder="Admin Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="message"></p>
+</div>
+
+<div id="dashboard" class="hidden">
+
+<div class="card">
+<h2>Welcome Admin</h2>
+<p>MR9PRO Management</p>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+<h2>Dashboard</h2>
+<div class="stat">Total Members: <b>0</b></div>
+<div class="stat">Total Tasks: <b>0</b></div>
+<div class="stat">Withdrawal Requests: <b>0</b></div>
+</div>
+
+<div class="card">
+<h2>Website Management</h2>
+<p>Admin Panel তৈরি হয়েছে।</p>
+<p>পরবর্তী ধাপে Firebase যুক্ত করে সদস্যদের পরিচালনা করা হবে।</p>
+</div>
+
+</div>
+</div>
+
+<script>
+const ADMIN="mohmaminulaisalama67@gmail.com";
+
+function login(){
+let email=document.getElementById("email").value.trim().toLowerCase();
+let password=document.getElementById("password").value;
+
+if(email!==ADMIN){
+document.getElementById("message").innerText="Admin Email সঠিক নয়";
+return;
+}
+
+// এটি শুধু ডিজাইন পরীক্ষা করার ডেমো
+if(password.length<6){
+document.getElementById("message").innerText="পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে";
+return;
+}
+
+document.getElementById("message").innerText=
+"এটি শুধু ডেমো। Firebase Authentication যুক্ত না হওয়া পর্যন্ত Admin Login চালু নয়।";
+}
+
+function logout(){
+document.getElementById("dashboard").classList.add("hidden");
+document.getElementById("login").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
+
