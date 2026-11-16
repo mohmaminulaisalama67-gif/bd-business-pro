@@ -1,38 +1,329 @@
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_code VARCHAR(20) UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    balance DECIMAL(10, 2) DEFAULT 0.00,
-    is_admin TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Dashboard UI</title>
+    <!-- আইকনের জন্য Font Awesome লিংক -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-CREATE TABLE transactions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    type ENUM('deposit', 'withdraw') NOT NULL,
-    method VARCHAR(50) NOT NULL,
-    account_number VARCHAR(30) NOT NULL,
-    trx_id VARCHAR(100) DEFAULT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+        body {
+            background-color: #f4f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-CREATE TABLE tasks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    link VARCHAR(255) NOT NULL,
-    reward DECIMAL(10, 2) NOT NULL
-);
+        /* মোবাইল স্ক্রিন কন্টেইনার */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            position: relative;
+            padding: 20px;
+            padding-bottom: 85px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
 
--- ডিফল্ট অ্যাডমিন অ্যাকাউন্ট (Phone: 01700000000 | Pass: 123456)
-INSERT INTO users (user_code, name, phone, password, balance, is_admin) 
-VALUES ('MR9ADMIN', 'MR9PRO Admin', '01700000000', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 500.00, 1);
+        /* লাল ব্যালেন্স কার্ড */
+        .balance-card {
+            background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+            border-radius: 24px;
+            padding: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(211, 47, 47, 0.25);
+        }
 
--- নমুনা টাস্ক
-INSERT INTO tasks (title, link, reward) VALUES 
-('MR9PRO অফিশিয়াল পেজ ভিজিট করুন', 'https://example.com', 5.00),
-('ইউটিউব ভিডিও দেখুন (৩০ সেকেন্ড)', 'https://youtube.com', 10.00);
+        /* কার্ডের ডানপাশের হালকা ডিজাইন */
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+
+        .balance-title {
+            font-size: 13px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ডিপোজিট এবং উইথড্র বাটন বক্স */
+        .action-box {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .action-btn:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .icon-circle {
+            width: 30px;
+            height: 30px;
+            background: white;
+            color: #c62828;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .icon-square {
+            width: 30px;
+            height: 30px;
+            background: white;
+            color: #c62828;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        /* মেইন সার্ভিসেস হেডার */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .section-title i {
+            color: #d32f2f;
+        }
+
+        .view-all {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d32f2f;
+            text-decoration: none;
+        }
+
+        /* সার্ভিস গ্রিড (৪ কলাম) */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .service-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .service-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .service-item i {
+            font-size: 22px;
+            color: #334155;
+        }
+
+        .service-item span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        /* নিচের নেভিগেশন বার */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 14px;
+            border-top: 1px solid #f1f5f9;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.03);
+            margin-left: -20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: #d32f2f;
+        }
+
+        /* একটিভ ট্যাবের উপরের লাল দাগ */
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            width: 24px;
+            height: 3px;
+            background-color: #d32f2f;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- ব্যালেন্স কার্ড -->
+        <div class="balance-card">
+            <div class="balance-title">NET BALANCE</div>
+            <div class="balance-amount">500.00 ৳</div>
+            
+            <div class="action-box">
+                <div class="action-btn">
+                    <div class="icon-circle"><i class="fa-solid fa-plus"></i></div>
+                    <span>DEPOSIT</span>
+                </div>
+                <div class="action-btn">
+                    <div class="icon-square"><i class="fa-solid fa-wallet"></i></div>
+                    <span>WITHDRAW</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- মেইন সার্ভিসেস সেকশন -->
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>MAIN SERVICES</span>
+            </div>
+            <a href="#" class="view-all">VIEW ALL</a>
+        </div>
+
+        <!-- সার্ভিস আইকন গ্রিড -->
+        <div class="services-grid">
+            <div class="service-item">
+                <i class="fa-solid fa-crown"></i>
+                <span>Plans</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Work</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Profile</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Analysis</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-headset"></i>
+                <span>Support</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Refer</span>
+            </div>
+            <div class="service-item">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <span>Payout</span>
+            </div>
+        </div>
+
+        <!-- বটম নেভিগেশন বার -->
+        <div class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-crown"></i>
+                <span>Plans</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Work</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Account</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
