@@ -1,1 +1,99 @@
+from pathlib import Path
 
+html = r'''<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR9PRO | হোম</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f6fa;color:#222}
+header{background:#c91525;color:#fff;text-align:center;padding:25px 15px}
+header h1{margin:0;font-size:32px}
+header p{margin:8px 0 0}
+nav{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;background:#fff;padding:13px;box-shadow:0 2px 7px #0001}
+nav a{color:#c91525;text-decoration:none;font-weight:bold;padding:7px}
+.hero{background:linear-gradient(135deg,#c91525,#ed4650);color:#fff;text-align:center;padding:48px 18px}
+.hero h2{font-size:28px;margin:0 0 12px}
+.hero p{max-width:600px;margin:0 auto 20px;line-height:1.6}
+.btn{display:inline-block;background:#fff;color:#c91525;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold;margin:5px}
+.btn.red{background:#c91525;color:#fff}
+main{max-width:950px;margin:22px auto;padding:0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.card{background:#fff;border-radius:13px;padding:20px;box-shadow:0 3px 12px #0000000d}
+.card h3{color:#c91525;margin-top:0}
+.icon{font-size:28px}
+.notice{background:#fff7df;border-left:4px solid #e0a000;padding:13px;border-radius:7px;line-height:1.55}
+.muted{font-size:14px;color:#667;line-height:1.55}
+footer{text-align:center;background:#24242a;color:#fff;padding:22px;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>MR9PRO</h1>
+  <p>শিখুন • কাজ অনুশীলন করুন • দক্ষতা বাড়ান</p>
+</header>
+<nav>
+  <a href="#home">হোম</a>
+  <a href="#features">সুবিধা</a>
+  <a href="#how">যেভাবে ব্যবহার করবেন</a>
+  <a href="#account">অ্যাকাউন্ট</a>
+</nav>
+
+<section class="hero" id="home">
+  <h2>MR9PRO-তে স্বাগতম</h2>
+  <p>এখানে সাধারণ জ্ঞান কুইজ ও অনুশীলনী কাজের ডেমো দেখতে পারবেন। নিজের শেখার অগ্রগতি ও ডেমো পয়েন্টের নমুনাও দেখতে পারবেন।</p>
+  <a class="btn" href="#account">অ্যাকাউন্টের নমুনা দেখুন</a>
+  <a class="btn" href="#how">কীভাবে ব্যবহার করবেন</a>
+</section>
+
+<main>
+  <section id="features">
+    <h2>ওয়েবসাইটের সুবিধা</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">📝</div><h3>অনুশীলনী কাজ</h3><p>সাধারণ জ্ঞান ও শেখার জন্য নমুনা কাজের তালিকা।</p></div>
+      <div class="card"><div class="icon">👤</div><h3>সদস্য ড্যাশবোর্ড</h3><p>সদস্যের নিজের কাজ ও অগ্রগতির নমুনা দেখার জায়গা।</p></div>
+      <div class="card"><div class="icon">⭐</div><h3>ডেমো পয়েন্ট</h3><p>অনুশীলনের জন্য কাল্পনিক পয়েন্ট দেখানো হবে; এর কোনো নগদ মূল্য নেই।</p></div>
+    </div>
+  </section>
+
+  <section id="how" style="margin-top:26px">
+    <h2>যেভাবে ব্যবহার করবেন</h2>
+    <div class="card">
+      <ol style="line-height:2">
+        <li>ওয়েবসাইটের পেজগুলো ঘুরে দেখুন।</li>
+        <li>অনুশীলনী কাজ ও কুইজের নির্দেশনা পড়ুন।</li>
+        <li>ডেমো ড্যাশবোর্ডে নমুনা অগ্রগতি দেখুন।</li>
+      </ol>
+      <p class="muted">আসল সদস্য অ্যাকাউন্ট চালু হলে নিরাপদ রেজিস্ট্রেশন ও লগইন ব্যবস্থা যুক্ত করতে হবে।</p>
+    </div>
+  </section>
+
+  <section id="account" style="margin-top:26px">
+    <h2>সদস্য ও অ্যাডমিন অংশ</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>সদস্য ড্যাশবোর্ড</h3>
+        <p>নিজের কাজ ও ডেমো পয়েন্টের নমুনা দেখতে পারবেন।</p>
+        <a class="btn red" href="index.html#member">ডেমো সদস্য পেজ</a>
+      </div>
+      <div class="card">
+        <h3>অ্যাডমিন ড্যাশবোর্ড</h3>
+        <p>অ্যাডমিন ব্যবস্থাপনার নমুনা। এটি এখনো সুরক্ষিত বা ব্যক্তিগত নয়।</p>
+        <a class="btn red" href="index.html#admin">ডেমো অ্যাডমিন পেজ</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top:26px" class="notice">
+    <b>ডেমো ও নিরাপত্তা নোট:</b> এই হোমপেজ শুধু তথ্য ও ডিজাইন দেখায়। এখানে এখনো বাস্তব রেজিস্ট্রেশন, লগইন, সদস্য-তথ্য সংরক্ষণ, টাকা জমা বা উত্তোলনের ব্যবস্থা নেই। কাউকে টাকা পাঠাতে বা পাসওয়ার্ড, PIN, OTP কিংবা পেমেন্ট তথ্য দিতে বলবেন না।
+  </section>
+</main>
+<footer>© 2026 MR9PRO · ডেমো ওয়েবসাইট</footer>
+</body>
+</html>'''
+
+path = Path("/mnt/data/MR9PRO-homepage.html")
+path.write_text(html, encoding="utf-8")
+print(f"তৈরি হয়েছে: {path}")
