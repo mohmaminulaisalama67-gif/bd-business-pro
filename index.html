@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR9PRO - কাজ করুন, আয় করুন</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;color:#222}
+header{background:#d71920;color:white;padding:20px;text-align:center}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0}
+nav{background:white;padding:14px;display:flex;justify-content:space-around;box-shadow:0 2px 5px #ddd}
+nav a{color:#c91520;text-decoration:none;font-weight:bold}
+.hero{background:#d71920;color:white;text-align:center;padding:35px 15px}
+.hero h2{font-size:27px;margin:0 0 12px}
+.btn{background:white;color:#d71920;border:0;border-radius:7px;padding:12px 22px;font-size:16px;font-weight:bold}
+.container{padding:18px}
+.card{background:white;padding:20px;border-radius:12px;margin-bottom:15px;box-shadow:0 2px 8px #ddd}
+.card h3{color:#d71920;margin-top:0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{text-align:center;border:1px solid #eee}
+.stat strong{display:block;font-size:23px;color:#d71920}
+.task{border-left:4px solid #d71920}
+footer{text-align:center;background:#222;color:white;padding:20px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>MR9PRO</h1>
+<p>কাজ করুন, আয় করুন</p>
+</header>
+
+<nav>
+<a href="#home">হোম</a>
+<a href="#tasks">কাজ</a>
+<a href="#wallet">ওয়ালেট</a>
+<a href="#login">লগইন</a>
+</nav>
+
+<section class="hero" id="home">
+<h2>MR9PRO-তে স্বাগতম</h2>
+<p>সহজ কাজ সম্পন্ন করে আয় করুন</p>
+<button class="btn" onclick="document.getElementById('tasks').scrollIntoView()">কাজ দেখুন</button>
+</section>
+
+<div class="container">
+<div class="stats">
+<div class="card stat">
+<strong>৳০</strong>
+আমার আয়
+</div>
+<div class="card stat">
+<strong>০</strong>
+সম্পন্ন কাজ
+</div>
+</div>
+
+<div class="card" id="tasks">
+<h3>আজকের কাজ</h3>
+<div class="task card">
+<h3>নতুন কাজ</h3>
+<p>এখানে কাজের বিবরণ দেওয়া হবে।</p>
+<p>পুরস্কার: ৳১০</p>
+<button class="btn" onclick="alert('কাজ শিগগিরই চালু হবে')">কাজ শুরু</button>
+</div>
+</div>
+
+<div class="card" id="wallet">
+<h3>আমার ওয়ালেট</h3>
+<p>ব্যালেন্স: ৳০.০০</p>
+<p>পেমেন্ট: বিকাশ | নগদ | রকেট</p>
+</div>
+
+<div class="card" id="login">
+<h3>সদস্য লগইন</h3>
+<p>সদস্যদের লগইন ব্যবস্থা শিগগিরই চালু হবে।</p>
+</div>
+</div>
+
+<footer>
+<p>© 2026 MR9PRO</p>
+<p>সব অধিকার সংরক্ষিত</p>
+</footer>
+
+</body>
+</html>
