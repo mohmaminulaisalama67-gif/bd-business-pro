@@ -1,7 +1,28 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "cr7_demo");
-if ($conn->connect_error) { die("Database Error: " . $conn->connect_error); }
+
+// অটোমেটিক ডাটাবেজ তৈরি (আলাদা MySQL সেটআপ লাগবে না)
+$db = new PDO('sqlite:cr7pay_auto.db');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$db->exec("CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    phone TEXT UNIQUE,
+    password TEXT,
+    balance REAL DEFAULT 100.00,
+    package TEXT DEFAULT 'Free Plan',
+    ref_code TEXT
+)");
+
+$db->exec("CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    title TEXT,
+    amount REAL,
+    status TEXT,
+    date TEXT
+)");
 
 $msg = "";
 
@@ -9,22 +30,22 @@ $msg = "";
 if (isset($_GET['logout'])) {
     session_destroy();
     header("Location: index.php");
-    exit();
+    exit;
 }
 
-// রেজিস্ট্রেশন (১০০ টাকা সাইনআপ বোনাস সহ)
+// রেজিস্ট্রেশন (১০০ টাকা বোনাস সহ)
 if (isset($_POST['register'])) {
-    $name = $_POST['name'];
-    $phone = $_POST['phone'];
+    $name = htmlspecialchars($_POST['name']);
+    $phone = htmlspecialchars($_POST['phone']);
     $pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $ref_code = "CR7" . rand(1000, 9999);
+    $ref = "CR7" . rand(10000, 99999);
 
-    $check = $conn->query("SELECT id FROM users WHERE phone='$phone'");
-    if ($check->num_rows > 0) {
-        $msg = "এই নম্বর দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!";
-    } else {
-        $conn->query("INSERT INTO users (name, phone, password, balance, ref_code) VALUES ('$name', '$phone', '$pass', 100.00, '$ref_code')");
-        $msg = "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! ১০০ টাকা বোনাস পেয়েছেন। এখন লগইন করুন।";
+    try {
+        $stmt = $db->prepare("INSERT INTO users (name, phone, password, balance, ref_code) VALUES (?, ?, ?, 100.00, ?)");
+        $stmt->execute([$name, $phone, $pass, $ref]);
+        $msg = "অভিনন্দন! অ্যাকাউন্ট তৈরি হয়েছে এবং ১০০ টাকা সাইনআপ বোনাস পেয়েছেন। এখন লগইন করুন।";
+    } catch (Exception $e) {
+        $msg = "এই মোবাইল নম্বর দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা আছে!";
     }
 }
 
@@ -32,66 +53,65 @@ if (isset($_POST['register'])) {
 if (isset($_POST['login'])) {
     $phone = $_POST['phone'];
     $pass = $_POST['password'];
-    $res = $conn->query("SELECT * FROM users WHERE phone='$phone'");
-    if ($res->num_rows > 0) {
-        $user = $res->fetch_assoc();
-        if (password_verify($pass, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            header("Location: index.php");
-            exit();
-        } else {
-            $msg = "পাসওয়ার্ড ভুল হয়েছে!";
-        }
+    $stmt = $db->prepare("SELECT * FROM users WHERE phone = ?");
+    $stmt->execute([$phone]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($pass, $user['password'])) {
+        $_SESSION['uid'] = $user['id'];
+        header("Location: index.php");
+        exit;
     } else {
-        $msg = "কোনো অ্যাকাউন্ট পাওয়া যায়নি!";
+        $msg = "মোবাইল নম্বর অথবা পাসওয়ার্ড ভুল হয়েছে!";
     }
 }
 
-// লগইন করা থাকলে ড্যাশবোর্ডের কাজগুলো হবে
-if (isset($_SESSION['user_id'])) {
-    $uid = $_SESSION['user_id'];
-    $user = $conn->query("SELECT * FROM users WHERE id=$uid")->fetch_assoc();
+// লগইন করা থাকলে ড্যাশবোর্ডের কাজ
+if (isset($_SESSION['uid'])) {
+    $uid = $_SESSION['uid'];
+    $user = $db->query("SELECT * FROM users WHERE id = $uid")->fetch(PDO::FETCH_ASSOC);
 
     // ডেইলি টাস্ক (অ্যাড দেখা)
-    if (isset($_POST['do_task'])) {
-        $reward = ($user['package'] == 'VIP') ? 25.00 : 5.00;
-        $conn->query("UPDATE users SET balance = balance + $reward WHERE id=$uid");
-        $msg = "টাস্ক সম্পন্ন! আপনার ব্যালেন্সে $reward টাকা যোগ হয়েছে।";
+    if (isset($_POST['complete_task'])) {
+        $earn = ($user['package'] == 'VIP Plan') ? 30.00 : 10.00;
+        $db->exec("UPDATE users SET balance = balance + $earn WHERE id = $uid");
+        $db->exec("INSERT INTO history (user_id, title, amount, status, date) VALUES ($uid, 'Daily Ad Task', $earn, 'Completed', '".date('d-m-Y')."')");
+        $msg = "টাস্ক সফল! আপনার ব্যালেন্সে ৳$earn যোগ হয়েছে।";
     }
 
-    // লাকি স্পিন রিওয়ার্ড
-    if (isset($_POST['spin_reward'])) {
-        $win = intval($_POST['spin_amount']);
-        $conn->query("UPDATE users SET balance = balance + $win WHERE id=$uid");
-        $msg = "অভিনন্দন! স্পিন করে আপনি $win টাকা জিতেছেন।";
+    // লাকি স্পিন
+    if (isset($_POST['claim_spin'])) {
+        $win = floatval($_POST['win_amount']);
+        $db->exec("UPDATE users SET balance = balance + $win WHERE id = $uid");
+        $db->exec("INSERT INTO history (user_id, title, amount, status, date) VALUES ($uid, 'Lucky Spin Bonus', $win, 'Completed', '".date('d-m-Y')."')");
+        $msg = "স্পিন বোনাস ৳$win আপনার মূল ব্যালেন্সে যোগ হয়েছে!";
     }
 
-    // প্যাকেজ কেনা (ডিপোজিট)
-    if (isset($_POST['buy_package'])) {
-        $pkg = $_POST['pkg_name'];
-        $price = $_POST['pkg_price'];
-        $method = $_POST['method'];
-        $trx = $_POST['trx_id'];
-        $conn->query("INSERT INTO transactions (user_id, type, method, number, amount, status) VALUES ($uid, 'Deposit ($pkg)', '$method', '$trx', $price, 'Approved')");
-        $conn->query("UPDATE users SET package='$pkg' WHERE id=$uid");
-        $msg = "অভিনন্দন! আপনার $pkg প্যাকেজটি অ্যাক্টিভ হয়েছে।";
+    // প্যাকেজ অ্যাক্টিভেশন (ডিপোজিট)
+    if (isset($_POST['activate_pkg'])) {
+        $trx = htmlspecialchars($_POST['trx_id']);
+        $method = htmlspecialchars($_POST['method']);
+        $db->exec("UPDATE users SET package = 'VIP Plan' WHERE id = $uid");
+        $db->exec("INSERT INTO history (user_id, title, amount, status, date) VALUES ($uid, 'VIP Deposit ($method: $trx)', 500, 'Approved', '".date('d-m-Y')."')");
+        $msg = "VIP প্যাকেজ সফলভাবে চালু হয়েছে! এখন প্রতি টাস্কে ৩০ টাকা পাবেন।";
     }
 
     // উইথড্র রিকোয়েস্ট
-    if (isset($_POST['withdraw'])) {
-        $method = $_POST['method'];
-        $number = $_POST['number'];
+    if (isset($_POST['withdraw_req'])) {
         $amount = floatval($_POST['amount']);
+        $method = htmlspecialchars($_POST['method']);
+        $number = htmlspecialchars($_POST['number']);
+
         if ($user['balance'] >= $amount && $amount >= 200) {
-            $conn->query("UPDATE users SET balance = balance - $amount WHERE id=$uid");
-            $conn->query("INSERT INTO transactions (user_id, type, method, number, amount, status) VALUES ($uid, 'Withdraw', '$method', '$number', $amount, 'Pending')");
+            $db->exec("UPDATE users SET balance = balance - $amount WHERE id = $uid");
+            $db->exec("INSERT INTO history (user_id, title, amount, status, date) VALUES ($uid, 'Withdraw ($method - $number)', $amount, 'Pending', '".date('d-m-Y')."')");
             $msg = "উইথড্র রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে!";
         } else {
             $msg = "পর্যাপ্ত ব্যালেন্স নেই অথবা সর্বনিম্ন ২০০ টাকা হতে হবে।";
         }
     }
-    // আপডেটেড ইউজার ডাটা আনা
-    $user = $conn->query("SELECT * FROM users WHERE id=$uid")->fetch_assoc();
+
+    $user = $db->query("SELECT * FROM users WHERE id = $uid")->fetch(PDO::FETCH_ASSOC);
 }
 ?>
 
@@ -100,104 +120,81 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CR7PAY - ডেমো প্ল্যাটফর্ম</title>
+    <title>CR7PAY - স্মার্ট ইনকাম প্ল্যাটফর্ম</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #121212; color: #fff; margin: 0; padding: 0; }
-        .app-container { max-width: 480px; margin: auto; background: #1e1e2f; min-height: 100vh; padding-bottom: 70px; position: relative; }
-        .header { background: linear-gradient(135deg, #ff512f, #dd2476); padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
-        .header h2 { margin: 0; font-size: 24px; letter-spacing: 1px; }
-        .balance-card { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; margin-top: 15px; }
-        .balance-card h1 { margin: 5px 0; font-size: 32px; color: #ffd700; }
-        .badge { background: #28a745; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
-        .alert { background: #ffc107; color: #000; padding: 10px; margin: 15px; border-radius: 8px; text-align: center; font-weight: bold; }
-        .section { display: none; padding: 15px; }
-        .section.active { display: block; }
-        .grid-menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        .menu-box { background: #2a2a40; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #3a3a55; transition: 0.3s; }
-        .menu-box:hover { background: #dd2476; }
-        .card { background: #2a2a40; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; background: #121212; color: #fff; }
-        button { width: 100%; padding: 12px; background: linear-gradient(135deg, #ff512f, #dd2476); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #181824; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #333; }
-        .bottom-nav div { cursor: pointer; font-size: 14px; color: #aaa; }
-        .bottom-nav div.active-nav { color: #ff512f; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { border-bottom: 1px solid #444; padding: 8px; text-align: left; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; }
+        .mobile-frame { width: 100%; max-width: 450px; background: #1e293b; min-height: 100vh; padding-bottom: 80px; box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative; }
+        .top-bar { background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; text-align: center; }
+        .logo { font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #fff; }
+        .wallet-box { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.2); }
+        .wallet-box h1 { font-size: 32px; color: #38bdf8; margin: 5px 0; }
+        .plan-badge { background: #10b981; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .notice { background: #334155; color: #fbbf24; padding: 8px 15px; font-size: 13px; margin: 15px; border-radius: 8px; border-left: 4px solid #fbbf24; }
+        .alert-msg { background: #10b981; color: #fff; padding: 12px; margin: 15px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px; }
+        .grid-item { background: #334155; padding: 20px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; border: 1px solid #475569; }
+        .grid-item:hover { background: #2563eb; transform: translateY(-2px); }
+        .grid-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+        .page { display: none; padding: 15px; }
+        .page.active { display: block; }
+        .box { background: #334155; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 14px; }
+        .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #2563eb, #7c3aed); border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #0f172a; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; }
+        .nav-btn { text-align: center; font-size: 12px; color: #94a3b8; cursor: pointer; }
+        .nav-btn.active { color: #38bdf8; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        th, td { padding: 10px 5px; border-bottom: 1px solid #475569; text-align: left; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h2>CR7PAY DEMO</h2>
-        <?php if(isset($_SESSION['user_id'])): ?>
-            <p style="margin:5px 0;">স্বাগতম, <b><?php echo $user['name']; ?></b> <span class="badge"><?php echo $user['package']; ?> Plan</span></p>
-            <div class="balance-card">
-                <span>বর্তমান ব্যালেন্স</span>
+<div class="mobile-frame">
+    <div class="top-bar">
+        <div class="logo">CR7PAY</div>
+        <?php if (isset($_SESSION['uid'])): ?>
+            <p style="font-size:14px; margin-top:5px;"><?php echo $user['name']; ?> <span class="plan-badge"><?php echo $user['package']; ?></span></p>
+            <div class="wallet-box">
+                <span style="font-size:13px; color:#cbd5e1;">মোট ব্যালেন্স</span>
                 <h1>৳ <?php echo number_format($user['balance'], 2); ?></h1>
-                <small>রেফার কোড: <b><?php echo $user['ref_code']; ?></b></small>
+                <span style="font-size:12px;">রেফার কোড: <b><?php echo $user['ref_code']; ?></b></span>
             </div>
+        <?php else: ?>
+            <p style="font-size:13px; margin-top:5px; color:#e2e8f0;">অ্যাডভান্সড উপায়ে ইনকাম করুন স্মার্ট ও বিশ্বস্ত মাধ্যমে</p>
         <?php endif; ?>
     </div>
 
-    <?php if($msg != "") echo "<div class='alert'>$msg</div>"; ?>
+    <?php if ($msg != "") echo "<div class='alert-msg'>$msg</div>"; ?>
 
-    <?php if(!isset($_SESSION['user_id'])): ?>
-        <!-- লগইন ও রেজিস্ট্রেশন সেকশন -->
+    <?php if (!isset($_SESSION['uid'])): ?>
+        <!-- লগইন ও রেজিস্ট্রেশন -->
         <div style="padding: 20px;">
-            <div class="card" id="login-box">
-                <h3>লগইন করুন</h3>
+            <div class="box" id="login-view">
+                <h3 style="margin-bottom:10px;">লগইন করুন</h3>
                 <form method="POST">
-                    <input type="text" name="phone" placeholder="মোবাইল নম্বর" required>
-                    <input type="password" name="password" placeholder="পাসওয়ার্ড" required>
-                    <button type="submit" name="login">লগইন</button>
+                    <input type="text" name="phone" placeholder="মোবাইল নম্বর দিন" required>
+                    <input type="password" name="password" placeholder="পাসওয়ার্ড দিন" required>
+                    <button type="submit" name="login" class="btn">লগইন করুন</button>
                 </form>
-                <p style="text-align:center; margin-top:15px;">অ্যাকাউন্ট নেই? <a href="#" onclick="toggleAuth()" style="color:#ff512f;">নতুন অ্যাকাউন্ট খুলুন</a></p>
+                <p style="text-align:center; margin-top:15px; font-size:14px;">নতুন ইউজার? <a href="#" onclick="switchForm()" style="color:#38bdf8;">অ্যাকাউন্ট খুলুন (১০০৳ বোনাস)</a></p>
             </div>
 
-            <div class="card" id="reg-box" style="display:none;">
-                <h3>নতুন অ্যাকাউন্ট (১০০৳ বোনাস)</h3>
+            <div class="box" id="reg-view" style="display:none;">
+                <h3 style="margin-bottom:10px;">নতুন অ্যাকাউন্ট খুলুন</h3>
                 <form method="POST">
-                    <input type="text" name="name" placeholder="আপনার পুরো নাম" required>
+                    <input type="text" name="name" placeholder="আপনার পূর্ণ নাম" required>
                     <input type="text" name="phone" placeholder="মোবাইল নম্বর" required>
-                    <input type="password" name="password" placeholder="পাসওয়ার্ড দিন" required>
-                    <button type="submit" name="register">রেজিস্ট্রেশন করুন</button>
+                    <input type="password" name="password" placeholder="পাসওয়ার্ড তৈরি করুন" required>
+                    <button type="submit" name="register" class="btn">রেজিস্ট্রেশন সম্পন্ন করুন</button>
                 </form>
-                <p style="text-align:center; margin-top:15px;">ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="#" onclick="toggleAuth()" style="color:#ff512f;">লগইন করুন</a></p>
+                <p style="text-align:center; margin-top:15px; font-size:14px;">আগে থেকেই অ্যাকাউন্ট আছে? <a href="#" onclick="switchForm()" style="color:#38bdf8;">লগইন করুন</a></p>
             </div>
         </div>
 
     <?php else: ?>
-        <!-- ১. হোম ড্যাশবোর্ড -->
-        <div id="home" class="section active">
-            <div class="grid-menu">
-                <div class="menu-box" onclick="showTab('tasks')">📺<br><br>ডেইলি টাস্ক</div>
-                <div class="menu-box" onclick="showTab('spin')">🎡<br><br>লাকি স্পিন</div>
-                <div class="menu-box" onclick="showTab('packages')">💎<br><br>প্যাকেজ কিনুন</div>
-                <div class="menu-box" onclick="showTab('withdraw')">💸<br><br>উইথড্র করুন</div>
-                <div class="menu-box" onclick="showTab('refer')">👥<br><br>রেফার ও আয়</div>
-                <div class="menu-box" onclick="showTab('history')">📜<br><br>হিস্ট্রি</div>
-            </div>
-        </div>
+        <div class="notice">📢 নোটিশ: প্রতিদিন টাস্ক সম্পন্ন করে এবং রেফার করে আনলিমিটেড আয় করুন।</div>
 
-        <!-- ২. ডেইলি টাস্ক -->
-        <div id="tasks" class="section">
-            <div class="card">
-                <h3>আজকের বিজ্ঞাপন ও টাস্ক</h3>
-                <p>বর্তমান প্যাকেজ অনুযায়ী প্রতি টাস্কে পাবেন: <b><?php echo ($user['package'] == 'VIP') ? '২৫ টাকা' : '৫ টাকা'; ?></b></p>
-                <form method="POST">
-                    <button type="submit" name="do_task">বিজ্ঞাপন দেখুন ও আয় করুন</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- ৩. লাকি স্পিন -->
-        <div id="spin" class="section">
-            <div class="card" style="text-align:center;">
-                <h3>লাকি স্পিন হুইল</h3>
-                <p>ভাগ্য পরীক্ষা করুন এবং বোনাস জিতুন!</p>
-                <h2 id="spin-result" style="color:#ffd700;">৳ ?</h2>
-                <button type="button" onclick="playSpin()">স্পিন ঘোরান</button>
-                <form method="POST" id="spin-form" style="display:none; margin-top:10px;">
-                    
+        <!-- হোম পেজ -->
+        <div id="p-home" class="page active">
+            
