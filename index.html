@@ -1,79 +1,308 @@
 
-if(!name || !email || password.length<6){
-alert("সব তথ্য পূরণ করুন। পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।");
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR9PRO - Member Platform</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f1f5f9;
+color:#172033;
+}
+header{
+background:#101d38;
+color:white;
+text-align:center;
+padding:25px;
+}
+header h1{color:#00e6a0;font-size:34px;margin:0}
+nav{
+background:#172b50;
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:8px;
+padding:12px;
+}
+button{
+background:#008c68;
+color:white;
+border:0;
+padding:13px 18px;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+nav button{background:#30476b}
+.container{max-width:750px;margin:20px auto;padding:12px}
+.card{
+background:white;
+padding:22px;
+border-radius:13px;
+margin-bottom:18px;
+box-shadow:0 3px 12px #0001;
+}
+h2{color:#008c68}
+input{
+width:100%;
+padding:14px;
+margin:9px 0;
+border:1px solid #ccd3dc;
+border-radius:8px;
+font-size:15px;
+}
+.hidden{display:none}
+.balance{
+background:#e3fff1;
+padding:20px;
+border-radius:10px;
+}
+.balance h1{font-size:35px;color:#008c68}
+.task{
+border:1px solid #ddd;
+padding:15px;
+border-radius:10px;
+margin:12px 0;
+}
+footer{text-align:center;padding:25px;color:#777}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>MR9PRO</h1>
+<p>Welcome To MR9PRO Member Platform</p>
+</header>
+
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('register')">Register</button>
+<button onclick="showPage('login')">Login</button>
+<button onclick="showPage('dashboard')">Dashboard</button>
+<button onclick="logout()">Logout</button>
+</nav>
+
+<div class="container">
+
+<section id="home" class="card">
+<h2>Welcome to MR9PRO</h2>
+<p>আমাদের সদস্য প্ল্যাটফর্মে আপনাকে স্বাগতম।</p>
+<p>নতুন অ্যাকাউন্ট খুলুন অথবা লগইন করুন।</p>
+<button onclick="showPage('register')">Create Account</button>
+<button onclick="showPage('login')">Member Login</button>
+</section>
+
+<section id="register" class="card hidden">
+<h2>Create New Account</h2>
+
+<input id="regName" placeholder="Full Name">
+<input id="regEmail" type="email" placeholder="Email Address">
+<input id="regPassword" type="password" placeholder="Password (Minimum 6 characters)">
+
+<button onclick="register()">Register Now</button>
+<p id="regMessage"></p>
+</section>
+
+<section id="login" class="card hidden">
+<h2>Member Login</h2>
+
+<input id="loginEmail" type="email" placeholder="Email Address">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">Login Now</button>
+<p id="loginMessage"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+
+<div class="card">
+<h2>Member Dashboard</h2>
+<h3 id="welcomeName">Welcome</h3>
+<p id="memberEmail"></p>
+
+<div class="balance">
+<p>My Demo Points</p>
+<h1 id="memberPoints">0</h1>
+</div>
+</div>
+
+<div class="card">
+<h2>Available Tasks</h2>
+
+<div class="task">
+<h3>Demo Task 01</h3>
+<p>পরীক্ষামূলক কাজ সম্পন্ন করুন।</p>
+<button onclick="completeTask('task1',10)">Complete Task</button>
+</div>
+
+<div class="task">
+<h3>Demo Task 02</h3>
+<p>পরীক্ষামূলক কাজ সম্পন্ন করুন।</p>
+<button onclick="completeTask('task2',20)">Complete Task</button>
+</div>
+</div>
+
+<div class="card">
+<h2>My Referral</h2>
+<p>আপনার Referral Code:</p>
+<h3 id="referralCode"></h3>
+</div>
+
+<div class="card">
+<h2>My Account</h2>
+<button onclick="logout()">Logout</button>
+</div>
+
+</section>
+
+</div>
+
+<footer>
+© 2026 MR9PRO | All Rights Reserved
+</footer>
+
+<script>
+const STORAGE_KEY="mr9pro_demo_accounts";
+const SESSION_KEY="mr9pro_demo_session";
+
+function getAccounts(){
+try{
+return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+}catch(e){
+return [];
+}
+}
+
+function saveAccounts(accounts){
+localStorage.setItem(STORAGE_KEY,JSON.stringify(accounts));
+}
+
+function currentUser(){
+const email=localStorage.getItem(SESSION_KEY);
+return getAccounts().find(user=>user.email===email);
+}
+
+function showPage(id){
+const protectedPages=["dashboard"];
+
+if(protectedPages.includes(id)&&!currentUser()){
+alert("প্রথমে Login করুন");
+id="login";
+}
+
+["home","register","login","dashboard"].forEach(page=>{
+document.getElementById(page).classList.add("hidden");
+});
+
+document.getElementById(id).classList.remove("hidden");
+
+if(id==="dashboard"){
+updateDashboard();
+}
+}
+
+function register(){
+const name=document.getElementById("regName").value.trim();
+const email=document.getElementById("regEmail").value.trim().toLowerCase();
+const password=document.getElementById("regPassword").value;
+const message=document.getElementById("regMessage");
+
+if(!name||!email||password.length<6){
+message.textContent="সব তথ্য পূরণ করুন। পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।";
 return;
 }
 
-if(accounts.some(a=>a.email===email)){
-alert("এই ইমেইলে অ্যাকাউন্ট আছে");
+let accounts=getAccounts();
+
+if(accounts.some(user=>user.email===email)){
+message.textContent="এই ইমেইলে অ্যাকাউন্ট আগে থেকেই আছে।";
 return;
 }
 
 accounts.push({
-name:name,
-email:email,
-password:password,
+name,
+email,
+password,
 points:0,
 completed:[]
 });
 
-save();
-document.getElementById("regmsg").innerText="Registration Successful! এখন Login করুন।";
+saveAccounts(accounts);
+
+message.textContent="Registration সফল হয়েছে! এখন Login করুন।";
+
+document.getElementById("regName").value="";
+document.getElementById("regEmail").value="";
+document.getElementById("regPassword").value="";
 }
 
 function login(){
-let email=document.getElementById("lemail").value.trim().toLowerCase();
-let password=document.getElementById("lpassword").value;
+const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+const password=document.getElementById("loginPassword").value;
+const message=document.getElementById("loginMessage");
 
-let user=accounts.find(a=>a.email===email && a.password===password);
+const user=getAccounts().find(user=>
+user.email===email&&user.password===password
+);
 
 if(!user){
-document.getElementById("loginmsg").innerText="Email অথবা Password ভুল!";
+message.textContent="ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
 return;
 }
 
-active=email;
-localStorage.setItem("mr9_active",active);
-page("dashboard");
+localStorage.setItem(SESSION_KEY,email);
+document.getElementById("loginPassword").value="";
+showPage("dashboard");
 }
 
-function showDashboard(){
-let user=accounts.find(a=>a.email===active);
+function updateDashboard(){
+const user=currentUser();
 
 if(!user){
-logout();
+showPage("login");
 return;
 }
 
-document.getElementById("username").innerText="Welcome "+user.name;
-document.getElementById("useremail").innerText="Email: "+user.email;
-document.getElementById("points").innerText=user.points;
+document.getElementById("welcomeName").textContent="Welcome, "+user.name;
+document.getElementById("memberEmail").textContent="Email: "+user.email;
+document.getElementById("memberPoints").textContent=user.points;
+document.getElementById("referralCode").textContent="MR9-"+user.email.split("@")[0].slice(0,8);
 }
 
-function task(points){
-let user=accounts.find(a=>a.email===active);
+function completeTask(taskId,points){
+let accounts=getAccounts();
+const email=localStorage.getItem(SESSION_KEY);
+const user=accounts.find(user=>user.email===email);
+
 if(!user)return;
 
-if(user.completed.includes(points)){
-alert("এই ডেমো টাস্ক আগেই সম্পন্ন হয়েছে");
+if(user.completed.includes(taskId)){
+alert("এই ডেমো কাজটি ইতিমধ্যে সম্পন্ন হয়েছে।");
 return;
 }
 
 user.points+=points;
-user.completed.push(points);
-save();
-showDashboard();
+user.completed.push(taskId);
+
+saveAccounts(accounts);
+updateDashboard();
+
 alert("ডেমো টাস্ক সম্পন্ন হয়েছে!");
 }
 
 function logout(){
-active=null;
-localStorage.removeItem("mr9_active");
-page("home");
+localStorage.removeItem(SESSION_KEY);
+showPage("home");
 }
 
-page(active?"dashboard":"home");
+showPage(currentUser()?"dashboard":"home");
 </script>
+
 </body>
 </html>
-  
