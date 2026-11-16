@@ -1,104 +1,103 @@
+from pathlib import Path
 
-<!DOCTYPE html>
+html = r'''<!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MR9PRO - কাজ করুন, আয় করুন</title>
+<title>MR9PRO — ডেমো সদস্য পোর্টাল</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;color:#222}
-header{background:#d71920;color:white;padding:20px;text-align:center}
-header h1{margin:0;font-size:30px}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6fa;color:#202431}
+header{background:#c91525;color:#fff;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:30px;letter-spacing:1px}
 header p{margin:7px 0 0}
-nav{background:white;padding:14px;display:flex;justify-content:space-around;box-shadow:0 2px 5px #ddd}
-nav a{color:#c91520;text-decoration:none;font-weight:bold}
-.hero{background:#d71920;color:white;text-align:center;padding:35px 15px}
-.hero h2{font-size:27px;margin:0 0 12px}
-.btn{background:white;color:#d71920;border:0;border-radius:7px;padding:12px 22px;font-size:16px;font-weight:bold}
-.container{padding:18px}
-.card{background:white;padding:20px;border-radius:12px;margin-bottom:15px;box-shadow:0 2px 8px #ddd}
-.card h3{color:#d71920;margin-top:0}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{text-align:center;border:1px solid #eee}
-.stat strong{display:block;font-size:23px;color:#d71920}
-.task{border-left:4px solid #d71920}
-footer{text-align:center;background:#222;color:white;padding:20px}
+nav{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;background:#fff;padding:12px;box-shadow:0 2px 8px #0001}
+button{border:0;border-radius:8px;padding:11px 16px;background:#c91525;color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#333}
+button.light{background:#fff;color:#c91525;border:1px solid #c91525}
+main{max-width:900px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border-radius:13px;padding:19px;margin:14px 0;box-shadow:0 3px 12px #18223a10}
+h2,h3{margin-top:0;color:#c91525}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.stat{background:#fff7f7;border:1px solid #f3d9dc;border-radius:10px;padding:16px}
+.stat strong{display:block;font-size:25px;color:#c91525;margin-bottom:5px}
+.notice{background:#fff7df;border-left:4px solid #e2a400;padding:12px;border-radius:7px;line-height:1.5}
+.muted{color:#687080;font-size:14px;line-height:1.5}
+.hidden{display:none}
+ul{padding-left:20px;line-height:1.9}
+footer{text-align:center;color:#687080;padding:25px}
 </style>
 </head>
 <body>
-
 <header>
-<h1>MR9PRO</h1>
-<p>কাজ করুন, আয় করুন</p>
+  <h1>MR9PRO</h1>
+  <p>সদস্য পোর্টাল — নিরাপদ ডেমো</p>
 </header>
-
 <nav>
-<a href="#home">হোম</a>
-<a href="#tasks">কাজ</a>
-<a href="#wallet">ওয়ালেট</a>
-<a href="#login">লগইন</a>
+  <button class="light" onclick="show('home')">হোম</button>
+  <button class="light" onclick="show('member')">সদস্য ডেমো</button>
+  <button class="light" onclick="show('admin')">অ্যাডমিন ডেমো</button>
 </nav>
+<main>
+  <section id="home" class="card">
+    <h2>MR9PRO-তে স্বাগতম</h2>
+    <p>এটি তোমার ওয়েবসাইটের নমুনা। এখানে সদস্য ও অ্যাডমিন ড্যাশবোর্ডের চেহারা দেখানো হয়েছে।</p>
+    <div class="notice"><b>গুরুত্বপূর্ণ:</b> এটি শুধু সামনের দিকের ডেমো। এখানে কোনো আসল রেজিস্ট্রেশন, লগইন, ব্যক্তিগত তথ্য সংরক্ষণ, টাকা জমা বা উত্তোলন হয় না।</div>
+    <h3 style="margin-top:20px">ডেমো দেখতে বেছে নাও</h3>
+    <button onclick="show('member')">সদস্য ড্যাশবোর্ড দেখুন</button>
+    <button class="secondary" onclick="show('admin')">অ্যাডমিন ড্যাশবোর্ড দেখুন</button>
+  </section>
 
-<section class="hero" id="home">
-<h2>MR9PRO-তে স্বাগতম</h2>
-<p>সহজ কাজ সম্পন্ন করে আয় করুন</p>
-<button class="btn" onclick="document.getElementById('tasks').scrollIntoView()">কাজ দেখুন</button>
-</section>
+  <section id="member" class="hidden">
+    <div class="card">
+      <h2>সদস্য ড্যাশবোর্ড</h2>
+      <p>স্বাগতম, ডেমো সদস্য!</p>
+      <div class="grid">
+        <div class="stat"><strong>০</strong>সম্পন্ন কাজ</div>
+        <div class="stat"><strong>০ পয়েন্ট</strong>ডেমো পয়েন্ট</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>আমার কাজ</h3>
+      <ul><li>সাধারণ জ্ঞান কুইজ — নমুনা কাজ</li><li>প্রোফাইল সম্পূর্ণ করা — নমুনা কাজ</li></ul>
+      <p class="muted">কাজ ও পয়েন্ট এখানে শুধু উদাহরণ হিসেবে দেখানো হয়েছে।</p>
+    </div>
+    <div class="card">
+      <h3>ডেমো ওয়ালেট</h3>
+      <p><b>ব্যালেন্স:</b> ০ ডেমো পয়েন্ট</p>
+      <p class="muted">বিকাশ, নগদ বা রকেটের মাধ্যমে কোনো বাস্তব লেনদেন চালু নেই। কাউকে টাকা পাঠাবে না।</p>
+    </div>
+  </section>
 
-<div class="container">
-<div class="stats">
-<div class="card stat">
-<strong>৳০</strong>
-আমার আয়
-</div>
-<div class="card stat">
-<strong>০</strong>
-সম্পন্ন কাজ
-</div>
-</div>
-
-<div class="card" id="tasks">
-<h3>আজকের কাজ</h3>
-<div class="task card">
-<h3>নতুন কাজ</h3>
-<p>এখানে কাজের বিবরণ দেওয়া হবে।</p>
-<p>পুরস্কার: ৳১০</p>
-<button class="btn" onclick="alert('প্রতিটি কাজ ১০ টাকা করে')">কাজ শুরু</button>
-</div>
-</div>
-<div class="card" id="wallet">
-<h3>আমার ওয়ালেট</h3>
-<p>ব্যালেন্স: ৳10000</p>
-<p>পেমেন্ট: বিকাশ | নগদ | রকেট</p>01980371630
-</div>
-
-
-<div class="card" id="register">
-  <h3>নতুন সদস্য রেজিস্ট্রেশন</h3>
-  <input type="text" placeholder="আপনার নাম">
-  <input type="email" placeholder="আপনার ইমেইল">
-  <input type="password" placeholder="পাসওয়ার্ড">
-  <button class="btn" onclick="alert('এটি ডেমো রেজিস্ট্রেশন। এখনো অ্যাকাউন্ট তৈরি হয় না।')">
-    রেজিস্ট্রেশন করুন
-  </button>
-</div>
-
-<div class="card" id="login">
-  <h3>সদস্য লগইন</h3>
-  <input type="email" placeholder="আপনার ইমেইল">
-  <input type="password" placeholder="পাসওয়ার্ড">
-  <button class="btn" onclick="alert('এটি ডেমো লগইন। এখনো লগইন চালু হয়নি।')">
-    লগইন করুন
-  </button>
-</div>
-  
-</div>
-
-<footer>
-<p>© 2026 MR9PRO</p>
-<p>সব অধিকার সংরক্ষিত</p>
-</footer>
-
+  <section id="admin" class="hidden">
+    <div class="card">
+      <h2>অ্যাডমিন ড্যাশবোর্ড — নমুনা</h2>
+      <p>এখানে ভবিষ্যতে অ্যাডমিনের জন্য সদস্য ও কাজ পরিচালনার অংশ থাকবে।</p>
+      <div class="grid">
+        <div class="stat"><strong>০</strong>মোট সদস্য (ডেমো)</div>
+        <div class="stat"><strong>০</strong>জমা কাজ (ডেমো)</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>অ্যাডমিনের কাজ</h3>
+      <ul><li>সদস্য তালিকা দেখা</li><li>কাজ তৈরি ও সম্পাদনা</li><li>ডেমো পয়েন্ট পর্যালোচনা</li></ul>
+      <div class="notice"><b>নিরাপত্তা:</b> এই পেজটি গোপন বা সুরক্ষিত নয়। যে কেউ অ্যাডমিন ডেমো খুলতে পারে। এখানে বাস্তব সদস্যের তথ্য রাখবে না।</div>
+    </div>
+  </section>
+</main>
+<footer>© 2026 MR9PRO · ডেমো সংস্করণ</footer>
+<script>
+function show(id){
+  ['home','member','admin'].forEach(function(section){
+    document.getElementById(section).classList.toggle('hidden',section!==id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
 </body>
-</html>
+</html>'''
+
+path = Path("/mnt/data/MR9PRO-demo-index.html")
+path.write_text(html, encoding="utf-8")
+print(f"তৈরি হয়েছে: {path}")
