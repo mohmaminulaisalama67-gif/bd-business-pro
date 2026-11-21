@@ -158,13 +158,39 @@ window.register=async function(){
  }catch(e){alert(e.message)}
 };
 
+
 window.login=async function(){
  try{
   const email=document.getElementById("loginEmail").value.trim();
   const password=document.getElementById("loginPass").value;
+
+  if(!email){
+   alert("আপনার Email লিখুন");
+   return;
+  }
+
+  if(!password){
+   alert("আপনার Password লিখুন");
+   return;
+  }
+
   await signInWithEmailAndPassword(auth,email,password);
- }catch(e){alert(e.message)}
+
+ }catch(e){
+  console.error("Login Error:",e);
+
+  if(e.code==="auth/invalid-credential"){
+   alert("ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে");
+  }else if(e.code==="auth/invalid-email"){
+   alert("সঠিক Email লিখুন");
+  }else if(e.code==="auth/too-many-requests"){
+   alert("অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন");
+  }else{
+   alert("Login Error: "+e.message);
+  }
+ }
 };
+ 
 
 async function showAccount(user){
  const snap=await getDoc(doc(db,"users",user.uid));
