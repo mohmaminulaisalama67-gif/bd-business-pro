@@ -1,53 +1,427 @@
+<!DOCTYPE html>  <html lang="bn">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<title>MR9PRO | Digital Platform</title>  <style>  
+*{box-sizing:border-box}  
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif}  
+header{background:#0d2743;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}  
+.logo{font-size:25px;font-weight:bold;color:#38bdf8}  
+main{max-width:950px;margin:auto;padding:20px}  
+.card{background:#102b49;border:1px solid #204565;padding:20px;border-radius:14px;margin:15px 0}  
+h2{color:#55c7ff}  
+input,select{width:100%;padding:13px;margin:8px 0;background:#071b30;color:white;border:1px solid #31516d;border-radius:8px}  
+button{padding:12px 16px;background:#0284c7;color:white;border:0;border-radius:8px;cursor:pointer;margin:5px 3px}  
+button:hover{background:#0369a1}  
+button.secondary{background:#34516b}  
+button.danger{background:#a33b48}  
+.hidden{display:none!important}  
+.balance{font-size:32px;color:#38bdf8;font-weight:bold}  
+.small{font-size:13px;color:#a9c5dc}  
+.item{background:#0b2037;padding:12px;border-radius:8px;margin:8px 0;overflow-wrap:anywhere}  
+footer{text-align:center;color:#91a9bf;padding:25px}  
+</style>  </head>  <body>  <header>  
+<div class="logo">MR9PRO</div>  
+<div id="topStatus">DEMO PLATFORM</div>  
+</header>  <main>  <section id="welcome" class="card">  
+<h1>Welcome to MR9PRO</h1>  
+<p>আপনার ডিজিটাল অ্যাকাউন্ট তৈরি করুন।</p>  
+<button onclick="page('register')">Create Account</button>  
+<button class="secondary" onclick="page('login')">Login</button>  
+</section>  <section id="register" class="card hidden">  
+<h2>Create Account</h2>  
+<input id="regName" placeholder="আপনার নাম">  
+<input id="regEmail" type="email" placeholder="Email">  
+<input id="regPass" type="password" placeholder="Password (কমপক্ষে ৬ অক্ষর)">  
+<button onclick="register()">Register Now</button>  
+<button class="secondary" onclick="page('login')">Login</button>  
+</section>  <section id="login" class="card hidden">  
+<h2>Account Login</h2>  
+<input id="loginEmail" type="email" placeholder="Email">  
+<input id="loginPass" type="password" placeholder="Password">  
+<button onclick="login()">Login Now</button>  
+<button class="secondary" onclick="page('register')">Register</button>  
+</section>  <section id="userPanel" class="hidden">  <div class="card">  
+<h2>User Dashboard</h2>  
+<p>Welcome, <b id="userName"></b></p>  
+<p class="small">আপনার অ্যাকাউন্ট</p>  
+<div class="balance">৳ 0.00</div>  
+<p class="small">এটি ডেমো প্ল্যাটফর্ম। এখানে বাস্তব অর্থ জমা বা উত্তোলন হয় না।</p>  
+</div>  <div class="card">  
+<h2>Demo Request</h2>  
+<p>পরীক্ষামূলক অনুরোধ তৈরি করুন।</p>  
+<select id="requestType">  
+<option value="deposit">Demo Deposit Request</option>  
+<option value="withdraw">Demo Withdrawal Request</option>  
+</select>  
+<input id="requestAmount" type="number" min="1" max="1000000" placeholder="পরিমাণ লিখুন">  
+<button onclick="makeRequest()">Submit Demo Request</button>  
+</div>  <div class="card">  
+<h2>My Request History</h2>  
+<div id="myRequests">কোনো অনুরোধ নেই।</div>  
+</div>  <button class="danger" onclick="logout()">Logout</button>
 
-window.makeRequest = async function(){
+</section>  <section id="adminPanel" class="hidden">  <div class="card">  
+<h2>MR9PRO Admin Dashboard</h2>  
+<p>অ্যাডমিন কন্ট্রোল প্যানেল</p>  
+<p>মোট ইউজার: <b id="userCount">0</b></p>  
+<button onclick="loadAdmin()">Refresh Data</button>  
+</div>  <div class="card">  
+<h2>Registered Users</h2>  
+<div id="allUsers"></div>  
+</div>  <div class="card">  
+<h2>Demo Requests</h2>  
+<div id="allRequests"></div>  
+</div>  <button class="danger" onclick="logout()">Admin Logout</button>
 
-  if(requestInProgress) return;
-
-  const amount = Number(document.getElementById("requestAmount").value);
-  const type = document.getElementById("requestType").value;
-  const btn = document.getElementById("submitRequestBtn");
-
-  if(!auth.currentUser){
-    alert("আগে Login করুন");
-    return;
-  }
-
-  if(!Number.isFinite(amount) || amount < 1 || amount > 1000000){
-    alert("১ থেকে ১০০০০০০ এর মধ্যে পরিমাণ লিখুন");
-    return;
-  }
-
-  requestInProgress = true;
-  btn.disabled = true;
-  btn.textContent = "Submitting...";
-
-  try{
-
-    await addDoc(collection(db,"requests"),{
-      uid:auth.currentUser.uid,
-      type:type,
-      amount:amount,
-      status:"pending",
-      createdAt:serverTimestamp()
-    });
-
-    document.getElementById("requestAmount").value = "";
-
-    alert("ডেমো অনুরোধ জমা হয়েছে");
-
-    await loadMyRequests();
-
-  }catch(e){
-
-    alert("অনুরোধ জমা হয়নি: " + e.message);
-
-  }finally{
-
-    requestInProgress = false;
-    btn.disabled = false;
-    btn.textContent = "Submit Demo Request";
-
-  }
-
-};
-    
+</section>  </main>  <footer>© 2026 MR9PRO | Demo Platform</footer>  <script type="module">  
+  
+import {initializeApp}  
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";  
+  
+import {  
+getAuth,  
+createUserWithEmailAndPassword,  
+signInWithEmailAndPassword,  
+signOut,  
+onAuthStateChanged  
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";  
+  
+import {  
+getFirestore,  
+doc,  
+setDoc,  
+getDoc,  
+collection,  
+getDocs,  
+addDoc,  
+query,  
+where,  
+serverTimestamp,  
+updateDoc  
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";  
+  
+const firebaseConfig = {  
+apiKey: "AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",  
+authDomain: "mr9pro-c1631.firebaseapp.com",  
+projectId: "mr9pro-c1631",  
+storageBucket: "mr9pro-c1631.firebasestorage.app",  
+messagingSenderId: "519203001702",  
+appId: "1:519203001702:web:1d1a1aeb31d912185624a7",  
+measurementId: "G-5VGMJDD5RN"  
+};  
+  
+const app = initializeApp(firebaseConfig);  
+const auth = getAuth(app);  
+const db = getFirestore(app);  
+  
+let registrationInProgress = false;  
+  
+window.page = function(id){  
+document.querySelectorAll("main > section").forEach(s=>{  
+s.classList.add("hidden");  
+});  
+document.getElementById(id).classList.remove("hidden");  
+};  
+  
+window.register = async function(){  
+  
+try{  
+  
+const name = document.getElementById("regName").value.trim();  
+const email = document.getElementById("regEmail").value.trim();  
+const password = document.getElementById("regPass").value;  
+  
+if(!name) throw Error("আপনার নাম লিখুন");  
+if(!email) throw Error("Email লিখুন");  
+if(password.length < 6) throw Error("কমপক্ষে ৬ অক্ষরের Password দিন");  
+  
+registrationInProgress = true;  
+  
+const credential = await createUserWithEmailAndPassword(  
+auth,email,password  
+);  
+  
+await setDoc(doc(db,"users",credential.user.uid),{  
+name:name,  
+email:email,  
+role:"user",  
+createdAt:serverTimestamp()  
+});  
+  
+registrationInProgress = false;  
+  
+alert("Registration সফল হয়েছে!");  
+  
+await showAccount(credential.user);  
+  
+}catch(e){  
+  
+registrationInProgress = false;  
+console.error(e);  
+alert("Registration Error: "+e.message);  
+  
+}  
+  
+};  
+  
+window.login = async function(){  
+  
+try{  
+  
+const email = document.getElementById("loginEmail").value.trim();  
+const password = document.getElementById("loginPass").value;  
+  
+if(!email) throw Error("Email লিখুন");  
+if(!password) throw Error("Password লিখুন");  
+  
+await signInWithEmailAndPassword(auth,email,password);  
+  
+}catch(e){  
+  
+console.error(e);  
+  
+if(e.code==="auth/invalid-credential"){  
+alert("ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে");  
+}else if(e.code==="auth/invalid-email"){  
+alert("সঠিক Email লিখুন");  
+}else if(e.code==="auth/too-many-requests"){  
+alert("কিছুক্ষণ পরে আবার চেষ্টা করুন");  
+}else{  
+alert("Login Error: "+e.message);  
+}  
+  
+}  
+  
+};  
+  
+async function showAccount(user){  
+  
+const snap = await getDoc(doc(db,"users",user.uid));  
+  
+if(!snap.exists()){  
+alert("অ্যাকাউন্টের তথ্য পাওয়া যায়নি।");  
+await signOut(auth);  
+return;  
+}  
+  
+const data = snap.data();  
+  
+if(data.role==="admin"){  
+  
+page("adminPanel");  
+document.getElementById("topStatus").textContent="ADMIN";  
+await loadAdmin();  
+  
+}else{  
+  
+page("userPanel");  
+document.getElementById("topStatus").textContent="USER";  
+document.getElementById("userName").textContent=data.name || "User";  
+await loadMyRequests();  
+  
+}  
+  
+}  
+  
+window.makeRequest = async function(){  
+  
+try{  
+  
+if(!auth.currentUser) throw Error("আগে Login করুন");  
+  
+const amount = Number(document.getElementById("requestAmount").value);  
+const type = document.getElementById("requestType").value;  
+  
+if(!Number.isFinite(amount)||amount<1||amount>1000000){  
+throw Error("১ থেকে ১০০০০০০ এর মধ্যে পরিমাণ লিখুন");  
+}  
+  
+await addDoc(collection(db,"requests"),{  
+uid:auth.currentUser.uid,  
+type:type,  
+amount:amount,  
+status:"pending",  
+createdAt:serverTimestamp()  
+});  
+  
+document.getElementById("requestAmount").value="";  
+  
+alert("ডেমো অনুরোধ জমা হয়েছে");  
+  
+await loadMyRequests();  
+  
+}catch(e){  
+alert(e.message);  
+}  
+  
+};  
+  
+function addText(parent,text){  
+  
+const p = document.createElement("p");  
+p.textContent = text;  
+parent.appendChild(p);  
+return p;  
+  
+}  
+  
+async function loadMyRequests(){  
+  
+if(!auth.currentUser) return;  
+  
+const area = document.getElementById("myRequests");  
+area.replaceChildren();  
+  
+const q = query(  
+collection(db,"requests"),  
+where("uid","==",auth.currentUser.uid)  
+);  
+  
+const result = await getDocs(q);  
+  
+if(result.empty){  
+addText(area,"কোনো অনুরোধ নেই");  
+return;  
+}  
+  
+result.forEach(d=>{  
+  
+const x = d.data();  
+const box = document.createElement("div");  
+  
+box.className="item";  
+  
+addText(box,x.type+" | ৳ "+x.amount);  
+addText(box,"Status: "+x.status);  
+  
+area.appendChild(box);  
+  
+});  
+  
+}  
+  
+window.loadAdmin = async function(){  
+  
+try{  
+  
+const users = await getDocs(collection(db,"users"));  
+  
+document.getElementById("userCount").textContent=users.size;  
+  
+const userArea = document.getElementById("allUsers");  
+userArea.replaceChildren();  
+  
+users.forEach(d=>{  
+  
+const x = d.data();  
+const box = document.createElement("div");  
+  
+box.className="item";  
+  
+addText(box,(x.name||"User")+" | "+(x.email||"")+" | "+(x.role||"user"));  
+  
+userArea.appendChild(box);  
+  
+});  
+  
+const requests = await getDocs(collection(db,"requests"));  
+  
+const requestArea = document.getElementById("allRequests");  
+requestArea.replaceChildren();  
+  
+if(requests.empty){  
+addText(requestArea,"কোনো অনুরোধ নেই");  
+}  
+  
+requests.forEach(d=>{  
+  
+const x = d.data();  
+const box = document.createElement("div");  
+  
+box.className="item";  
+  
+addText(box,x.type+" | ৳ "+x.amount+" | "+x.status);  
+addText(box,"User ID: "+x.uid);  
+  
+if(x.status==="pending"){  
+  
+const btn = document.createElement("button");  
+  
+btn.textContent="Mark Reviewed";  
+btn.onclick=()=>reviewRequest(d.id);  
+  
+box.appendChild(btn);  
+  
+}  
+  
+requestArea.appendChild(box);  
+  
+});  
+  
+}catch(e){  
+  
+alert("Admin data load error: "+e.message);  
+console.error(e);  
+  
+}  
+  
+};  
+  
+async function reviewRequest(id){  
+  
+try{  
+  
+await updateDoc(doc(db,"requests",id),{  
+status:"reviewed",  
+reviewedAt:serverTimestamp()  
+});  
+  
+alert("অনুরোধটি পর্যালোচনা করা হয়েছে");  
+  
+await loadAdmin();  
+  
+}catch(e){  
+  
+alert(e.message);  
+  
+}  
+  
+}  
+  
+window.logout = async function(){  
+  
+try{  
+await signOut(auth);  
+page("welcome");  
+document.getElementById("topStatus").textContent="DEMO PLATFORM";  
+}catch(e){  
+alert(e.message);  
+}  
+  
+};  
+  
+onAuthStateChanged(auth,async user=>{  
+  
+if(registrationInProgress) return;  
+  
+if(!user){  
+page("welcome");  
+return;  
+}  
+  
+try{  
+  
+await showAccount(user);  
+  
+}catch(e){  
+  
+console.error(e);  
+alert("Account Error: "+e.message);  
+  
+}  
+  
+});  
+  
+</script>  </body>  
+</html>
