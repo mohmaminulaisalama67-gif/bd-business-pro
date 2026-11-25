@@ -365,4 +365,58 @@ window.createTask=async()=>{
   }catch(e){alert("কাজ প্রকাশ করা যায়নি: "+e.message)}
 };
 async function loadTasks(){
- const area=$("taskList");a
+ const area=$("taskList");area.replaceChildren();
+ try{
+   const snap=await getDocs(query(collection(db,"tasks"),where("status","==","active")));
+   if(snap.empty){area.innerHTML='<div class="empty">এখনো কোনো কাজ প্রকাশ করা হয়নি।</div>';return}
+   snap.forEach(d=>{
+    const x=d.data(),box=document.createElement("div");box.className="task";
+    const h=document.createElement("h3");h.textContent=x.title||"কাজ";
+    const desc=document.createElement("p");desc.className="muted";desc.textContent=x.description||"";
+    const meta=document.createElement("div");meta.className="meta";meta.textContent="অনুমোদনের পর সম্ভাব্য পুরস্কার: "+money(x.reward);
+    const btn=document.createElement("button");btn.className="primary";btn.textContent="কাজ জমা দিন";
+    btn.onclick=()=>submitTask(d.id,x.title||"কাজ");
+    box.append(h,desc,meta,btn);area.appendChild(box);
+  });
+ }catch(e){area.innerHTML='<div class="empty">কাজ লোড করা যায়নি: '+(e.code||e.message)+'</div>'}
+}
+async function submitTask(taskId,title){
+ const proof=prompt("কাজের প্রমাণ হিসেবে লিংক বা বিবরণ লিখুন:");
+ if(!proof||!proof.trim())return;
+ try{
+   await addDoc(collection(db,"taskSubmissions"),{taskId,title,uid:auth.currentUser.uid,proof:proof.trim(),status:"pending",submittedAt:serverTimestamp()});
+   alert("কাজ জমা হয়েছে। Admin যাচাই করবেন।");
+  }catch(e){alert("জমা দেওয়া যায়নি: "+e.message)}
+}
+async function loadHistory(){
+ const area=$("historyList");area.replaceChildren();
+ try{
+   const snap=await getDocs(query(collection(db,"taskSubmissions"),where("uid","==",auth.currentUser.uid)));
+   if(snap.empty){area.textContent="এখনো কোনো কাজ জমা দেওয়া হয়নি।";return}
+   snap.forEach(d=>{const x=d.data(),p=document.createElement("p");p.textContent=(x.title||"কাজ")+" — "+(x.status||"pending");area.appendChild(p)});
+  }catch(e){area.textContent="History load error: "+e.message}
+}
+async function loadAdminTasks(){
+ if(currentProfile?.role!=="admin")return;
+ const area=$("adminTaskList");area.replaceChildren();
+ try{
+   const snap=await getDocs(collection(db,"tasks"));
+   if(snap.empty){area.textContent="কোনো কাজ নেই";return}
+   snap.forEach(d=>{const x=d.data(),p=document.createElement("p");p.textContent=(x.title||"কাজ")+" — "+(x.status||"");area.appendChild(p)});
+  }catch(e){area.textContent=e.message}
+}
+window.copyReferral=async()=>{
+ try{await navigator.clipboard.writeText($("refCode").textContent);alert("Referral ID কপি হয়েছে")}
+ catch(e){alert("Referral ID: "+$("refCode").textContent)}
+};
+window.sendSupport=()=>{const m=$("supportMessage").value.trim();if(!m){alert("সমস্যা লিখুন");return}alert("Support form-এর backend এখনো যুক্ত হয়নি। আপনার বার্তা কপি করে Admin-কে পাঠান।")};
+window.logout=async()=>{await signOut(auth)};
+onAuthStateChanged(auth,async user=>{
+ if(!user){setAuthScreen(true);authMode="login";updateAuthView();return}
+ try{
+   await loadProfile(user);renderPlans();setAuthScreen(false);showPage("home");
+  }catch(e){console.error(e);alert("Account load error: "+e.message)}
+});
+</script>
+</body>
+</html>
