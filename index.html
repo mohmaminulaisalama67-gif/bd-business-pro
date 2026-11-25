@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -272,20 +273,20 @@ window.submitAuth=async()=>{
  const email=$("authEmail").value.trim();
  const password=$("authPassword").value;
  try{
-  showMessage("অপেক্ষা করুন...");
-  if(!email||!password)throw Error("Email ও Password লিখুন");
-  if(authMode==="register"){
-   const name=$("regName").value.trim();
-   if(!name)throw Error("আপনার নাম লিখুন");
-   if(password.length<6)throw Error("Password কমপক্ষে ৬ অক্ষরের হতে হবে");
-   const cred=await createUserWithEmailAndPassword(auth,email,password);
-   await setDoc(doc(db,"users",cred.user.uid),{name,email,role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
-  }else{
-   await signInWithEmailAndPassword(auth,email,password);
+   showMessage("অপেক্ষা করুন...");
+   if(!email||!password)throw Error("Email ও Password লিখুন");
+   if(authMode==="register"){
+    const name=$("regName").value.trim();
+    if(!name)throw Error("আপনার নাম লিখুন");
+    if(password.length<6)throw Error("Password কমপক্ষে ৬ অক্ষরের হতে হবে");
+    const cred=await createUserWithEmailAndPassword(auth,email,password);
+    await setDoc(doc(db,"users",cred.user.uid),{name,email,role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
+   }else{
+    await signInWithEmailAndPassword(auth,email,password);
   }
  }catch(e){
-  console.error(e);
-  showMessage("সমস্যা: "+(e.code||e.message));
+   console.error(e);
+   showMessage("সমস্যা: "+(e.code||e.message));
  }
 };
 window.showPage=(name)=>{
@@ -302,8 +303,8 @@ function safeText(el,value){el.textContent=value??""}
 async function loadProfile(user){
  const snap=await getDoc(doc(db,"users",user.uid));
  if(!snap.exists()){
-  await setDoc(doc(db,"users",user.uid),{name:user.displayName||"Member",email:user.email||"",role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
-  return loadProfile(user);
+   await setDoc(doc(db,"users",user.uid),{name:user.displayName||"Member",email:user.email||"",role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
+   return loadProfile(user);
  }
  currentProfile=snap.data();
  const name=currentProfile.name||"Member";
@@ -317,53 +318,51 @@ async function loadProfile(user){
  safeText($("activePlan"),(currentProfile.activePlan||"Starter")+" (Free)");
  safeText($("refCode"),user.uid.slice(0,10).toUpperCase());
  if(currentProfile.role==="admin"){
-  const adminBtn=document.createElement("button");
-  adminBtn.className="primary";
-  adminBtn.textContent="Open Admin Panel";
-  adminBtn.onclick=()=>showPage("admin");
-  const card=$("accountPage").querySelector(".card");
-  if(!$("openAdminButton")){adminBtn.id="openAdminButton";card.appendChild(adminBtn)}
+   const adminBtn=document.createElement("button");
+   adminBtn.className="primary";
+   adminBtn.textContent="Open Admin Panel";
+   adminBtn.onclick=()=>showPage("admin");
+   const card=$("accountPage").querySelector(".card");
+   if(!$("openAdminButton")){adminBtn.id="openAdminButton";card.appendChild(adminBtn)}
  }
 }
 function renderPlans(){
  const plans=[["Starter","ফ্রি","প্রাথমিক সদস্য সুবিধা"],["Bronze","ফ্রি","সাধারণ কাজ ও অফার দেখুন"],["Silver","ফ্রি","যোগ্যতা অনুযায়ী অতিরিক্ত সুবিধা"],["Gold","ফ্রি","Admin ঘোষিত বিশেষ সুবিধা"]];
  $("plansList").replaceChildren();
  plans.forEach(([name,price,desc])=>{
-  const box=document.createElement("div");box.className="plan";
-  const top=document.createElement("div");top.className="plan-top";
-  const h=document.createElement("h3");h.textContent="MR9PRO "+name.toUpperCase();top.appendChild(h);
-  const body=document.createElement("div");body.className="plan-body";
-  const row=document.createElement("div");row.className="row";
-  const p=document.createElement("span");p.className="price";p.textContent=price;
-  const active=document.createElement("span");active.className="status";active.textContent=currentProfile?.activePlan===name?"✓ Active":"Free Plan";
-  row.append(p,active);
-  const text=document.createElement("p");text.className="muted";text.textContent=desc;
-  const btn=document.createElement("button");btn.className="primary";btn.textContent=currentProfile?.activePlan===name?"Current Plan":"Activate Free Plan";
-  btn.disabled=currentProfile?.activePlan===name;
-  btn.onclick=()=>activatePlan(name);
-  body.append(row,text,btn);box.append(top,body);$("plansList").appendChild(box);
+   const box=document.createElement("div");box.className="plan";
+   const top=document.createElement("div");top.className="plan-top";
+   const h=document.createElement("h3");h.textContent="MR9PRO "+name.toUpperCase();top.appendChild(h);
+   const body=document.createElement("div");body.className="plan-body";
+   const row=document.createElement("div");row.className="row";
+   const p=document.createElement("span");p.className="price";p.textContent=price;
+   const active=document.createElement("span");active.className="status";active.textContent=currentProfile?.activePlan===name?"✓ Active":"Free Plan";
+   row.append(p,active);
+   const text=document.createElement("p");text.className="muted";text.textContent=desc;
+   const btn=document.createElement("button");btn.className="primary";btn.textContent=currentProfile?.activePlan===name?"Current Plan":"Activate Free Plan";
+   btn.disabled=currentProfile?.activePlan===name;
+   btn.onclick=()=>activatePlan(name);
+   body.append(row,text,btn);box.append(top,body);$("plansList").appendChild(box);
  });
 }
 async function activatePlan(name){
  try{
-  if(!auth.currentUser)return;
-  await updateDoc(doc(db,"users",auth.currentUser.uid),{activePlan:name,planUpdatedAt:serverTimestamp()});
-  currentProfile.activePlan=name;renderPlans();await loadProfile(auth.currentUser);
-  alert(name+" Plan চালু হয়েছে। এটি বিনামূল্যের সদস্যপদ; কোনো অর্থ প্রদান হয়নি।");
- }catch(e){alert("Plan update error: "+e.message)}
+   if(!auth.currentUser)return;
+   await updateDoc(doc(db,"users",auth.currentUser.uid),{activePlan:name,planUpdatedAt:serverTimestamp()});
+   currentProfile.activePlan=name;renderPlans();await loadProfile(auth.currentUser);
+   alert(name+" Plan চালু হয়েছে। এটি বিনামূল্যের সদস্যপদ; কোনো অর্থ প্রদান হয়নি।");
+  }catch(e){alert("Plan update error: "+e.message)}
 }
 window.createTask=async()=>{
  try{
-  if(currentProfile?.role!=="admin")throw Error("শুধু Admin কাজ প্রকাশ করতে পারবেন");
-  const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
-  if(!title||!description)throw Error("কাজের নাম ও বিবরণ লিখুন");
-  if(!Number.isFinite(reward)||reward<0||reward>100000)throw Error("সঠিক পুরস্কারের পরিমাণ লিখুন");
-  await addDoc(collection(db,"tasks"),{title,description,reward,status:"active",createdBy:auth.currentUser.uid,createdAt:serverTimestamp()});
-  $("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
-  alert("কাজ প্রকাশ হয়েছে");loadAdminTasks();loadTasks();
- }catch(e){alert("কাজ প্রকাশ করা যায়নি: "+e.message)}
+   if(currentProfile?.role!=="admin")throw Error("শুধু Admin কাজ প্রকাশ করতে পারবেন");
+   const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
+   if(!title||!description)throw Error("কাজের নাম ও বিবরণ লিখুন");
+   if(!Number.isFinite(reward)||reward<0||reward>100000)throw Error("সঠিক পুরস্কারের পরিমাণ লিখুন");
+   await addDoc(collection(db,"tasks"),{title,description,reward,status:"active",createdBy:auth.currentUser.uid,createdAt:serverTimestamp()});
+   $("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
+   alert("কাজ প্রকাশ হয়েছে");loadAdminTasks();loadTasks();
+  }catch(e){alert("কাজ প্রকাশ করা যায়নি: "+e.message)}
 };
 async function loadTasks(){
- const area=$("taskList");area.replaceChildren();
- try{
-  const snap=await
+ const area=$("taskList");a
