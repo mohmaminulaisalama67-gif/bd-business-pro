@@ -1,655 +1,369 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
 <title>MR9PRO | Digital Platform</title>
-
 <style>
+:root{--red:#df3438;--red2:#bd2028;--ink:#172033;--muted:#758194;--bg:#f6f7fa;--line:#edf0f4;--green:#13ad83}
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#071426;
-  color:#fff;
-  font-family:Arial,sans-serif;
-}
-
-header{
-  background:#0d2743;
-  padding:18px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.logo{
-  font-size:25px;
-  font-weight:bold;
-  color:#38bdf8;
-}
-
-main{
-  max-width:950px;
-  margin:auto;
-  padding:20px;
-}
-
-.card{
-  background:#102b49;
-  border:1px solid #204565;
-  padding:20px;
-  border-radius:14px;
-  margin:15px 0;
-}
-
-h2{color:#55c7ff}
-
-input,select{
-  width:100%;
-  padding:13px;
-  margin:8px 0;
-  background:#071b30;
-  color:white;
-  border:1px solid #31516d;
-  border-radius:8px;
-}
-
-button{
-  padding:12px 16px;
-  background:#0284c7;
-  color:white;
-  border:0;
-  border-radius:8px;
-  cursor:pointer;
-  margin:5px 3px;
-}
-
-button:hover{background:#0369a1}
-button:disabled{opacity:.6;cursor:not-allowed}
-button.secondary{background:#34516b}
-button.danger{background:#a33b48}
-
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif;padding-bottom:88px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{background:#fff;padding:18px 18px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px #18243a0a}
+.identity{display:flex;align-items:center;gap:12px;min-width:0}
+.avatar{width:64px;height:64px;border-radius:17px;background:var(--red);color:white;display:grid;place-items:center;font-size:27px;flex-shrink:0}
+.idline{font-size:14px;color:#758194;font-weight:700;letter-spacing:.4px}
+.username{font-size:25px;font-weight:800;margin-top:2px;overflow-wrap:anywhere}
+.iconbtn{border:0;background:#fff;color:#687487;font-size:28px;padding:8px;position:relative}
+.dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--red);right:7px;top:7px}
+main{max-width:720px;margin:auto;padding:16px}
+.page{display:none}.page.active{display:block}
+.banner{height:112px;border-radius:22px;background:linear-gradient(115deg,#121820,#34302a 60%,#15191f);color:#fff;padding:20px;margin:4px 0 28px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.banner strong{font-size:19px}.banner span{font-size:13px;color:#e5e7eb;margin-top:6px}
+.balance-card{background:linear-gradient(135deg,#e23b3e,#c51f28);color:white;border-radius:34px;padding:27px 25px 24px;box-shadow:0 17px 32px #d52e3526;margin-bottom:34px;position:relative;overflow:hidden}
+.balance-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#ffffff0b;right:-90px;top:-100px}
+.eyebrow{font-weight:800;letter-spacing:1px;font-size:15px}
+.balance{font-size:clamp(38px,10vw,58px);font-weight:900;margin:22px 0 32px;line-height:1}
+.wallet-actions{display:flex;background:#ffffff20;border-radius:20px;overflow:hidden}
+.wallet-actions button{flex:1;background:transparent;border:0;color:#fff;font-size:17px;font-weight:800;padding:17px 8px}
+.wallet-actions button+button{border-left:1px solid #ffffff45}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 18px}
+.section-head h2{font-size:23px;margin:0}
+.section-head button{border:0;background:none;color:var(--red);font-weight:800}
+.service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:28px}
+.service{border:0;background:#fff;border-radius:23px;min-height:132px;padding:15px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-shadow:0 7px 22px #18243a08;color:#5e6b7e;font-weight:700}
+.service .ico{width:62px;height:62px;border-radius:18px;background:#f8fafc;display:grid;place-items:center;font-size:30px;color:#536174}
+.service:active{transform:scale(.98)}
+.free-card{background:#fff;border:0;border-radius:25px;width:100%;padding:20px 18px;display:flex;align-items:center;gap:15px;text-align:left;box-shadow:0 7px 22px #18243a08}
+.gift{width:72px;height:72px;border-radius:20px;background:#fff0f0;color:var(--red);display:grid;place-items:center;font-size:34px;flex-shrink:0}
+.free-copy{flex:1}.free-copy strong{font-size:22px;display:block}.free-copy span{color:var(--muted);display:block;margin-top:5px}
+.new{background:var(--red);color:#fff;border-radius:14px;padding:9px 14px;font-weight:800}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 6px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #18243a0d;z-index:10}
+.navbtn{border:0;background:#fff;color:#9aa5b4;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:700;padding:7px 2px}
+.navbtn .navico{font-size:26px}.navbtn.active{color:var(--red)}.navbtn.active:before{content:"";height:4px;width:45px;border-radius:0 0 5px 5px;background:var(--red);position:absolute;top:0}
+.card{background:#fff;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 7px 22px #18243a08}
+h2{margin:0 0 14px;font-size:22px}
+.muted{color:var(--muted);font-size:14px;line-height:1.5}
+.primary{background:var(--red);color:#fff;border:0;border-radius:13px;padding:13px 17px;font-weight:800}
+.secondary{background:#f0f2f5;color:#3d4858;border:0;border-radius:13px;padding:13px 17px;font-weight:700}
+.danger{background:#a92d36;color:#fff;border:0;border-radius:12px;padding:12px 16px}
+input,textarea,select{width:100%;padding:13px 14px;border:1px solid #e0e5eb;border-radius:12px;background:#fff;margin:7px 0;color:var(--ink)}
+label{display:block;font-weight:700;font-size:14px;margin-top:10px}
+.plan{border:1px solid #edf0f4;border-radius:22px;overflow:hidden;margin:15px 0;background:#fff}
+.plan-top{padding:20px;background:linear-gradient(120deg,#303943,#7a7370);color:white}
+.plan-top h3{font-size:24px;margin:0 0 8px}.plan-body{padding:18px}
+.price{font-size:27px;color:var(--red);font-weight:900}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.status{color:var(--green);font-weight:800}
+.task{border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0}
+.task h3{margin:0 0 7px}.task .meta{color:var(--muted);font-size:13px;margin:8px 0}
+.empty{text-align:center;padding:25px;color:var(--muted)}
 .hidden{display:none!important}
-
-.balance{
-  font-size:32px;
-  color:#38bdf8;
-  font-weight:bold;
-}
-
-.small{
-  font-size:13px;
-  color:#a9c5dc;
-}
-
-.item{
-  background:#0b2037;
-  padding:12px;
-  border-radius:8px;
-  margin:8px 0;
-  overflow-wrap:anywhere;
-}
-
-footer{
-  text-align:center;
-  color:#91a9bf;
-  padding:25px;
-}
+#authScreen{max-width:520px;margin:24px auto;padding:16px}
+#authScreen .card{padding:24px}
+#authScreen h1{font-size:30px}
+#message{white-space:pre-wrap;color:var(--red);font-size:14px;margin-top:10px}
+footer{text-align:center;color:#9aa5b4;padding:24px;font-size:12px}
+@media(max-width:430px){main{padding:13px}.service-grid{gap:9px}.service{min-height:119px;border-radius:19px;font-size:13px}.service .ico{width:55px;height:55px}.section-head h2{font-size:21px}.balance-card{padding:24px 20px}.wallet-actions button{font-size:15px}}
 </style>
 </head>
-
 <body>
 
+<div id="authScreen" class="hidden">
+  <div class="card">
+    <div style="color:var(--red);font-weight:900;font-size:25px">MR9PRO</div>
+    <h1 id="authTitle">Welcome to MR9PRO</h1>
+    <p class="muted">আপনার ডিজিটাল অ্যাকাউন্ট তৈরি করুন অথবা লগইন করুন।</p>
+    <div id="registerFields" class="hidden">
+      <label>আপনার নাম</label><input id="regName" placeholder="নাম লিখুন">
+    </div>
+    <label>Email</label><input id="authEmail" type="email" placeholder="আপনার Email">
+    <label>Password</label><input id="authPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর">
+    <button id="authSubmit" class="primary" style="width:100%;margin-top:12px" onclick="submitAuth()">Login</button>
+    <button class="secondary" style="width:100%;margin-top:8px" onclick="toggleAuth()">নতুন অ্যাকাউন্ট / Login</button>
+    <div id="message"></div>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
 <header>
-  <div class="logo">MR9PRO</div>
-  <div id="topStatus">DEMO PLATFORM</div>
+  <div class="identity">
+    <div class="avatar" id="avatar">MR</div>
+    <div style="min-width:0">
+      <div class="idline" id="userId">MR9PRO MEMBER</div>
+      <div class="username" id="headerName">Member</div>
+    </div>
+  </div>
+  <button class="iconbtn" onclick="showPage('account')" aria-label="Notifications">♧<span class="dot"></span></button>
 </header>
 
 <main>
-
-<section id="welcome" class="card">
-  <h1>Welcome to MR9PRO</h1>
-  <p>আপনার ডিজিটাল অ্যাকাউন্ট তৈরি করুন।</p>
-  <button onclick="page('register')">Create Account</button>
-  <button class="secondary" onclick="page('login')">Login</button>
-</section>
-
-<section id="register" class="card hidden">
-  <h2>Create Account</h2>
-  <input id="regName" placeholder="আপনার নাম">
-  <input id="regEmail" type="email" placeholder="Email">
-  <input id="regPass" type="password" placeholder="Password (কমপক্ষে ৬ অক্ষর)">
-  <button onclick="register()">Register Now</button>
-  <button class="secondary" onclick="page('login')">Login</button>
-</section>
-
-<section id="login" class="card hidden">
-  <h2>Account Login</h2>
-  <input id="loginEmail" type="email" placeholder="Email">
-  <input id="loginPass" type="password" placeholder="Password">
-  <button onclick="login()">Login Now</button>
-  <button class="secondary" onclick="page('register')">Register</button>
-</section>
-
-<section id="userPanel" class="hidden">
-
-  <div class="card">
-    <h2>User Dashboard</h2>
-    <p>Welcome, <b id="userName"></b></p>
-    <p class="small">আপনার অ্যাকাউন্ট</p>
-    <div class="balance">৳ 0.00</div>
-    <p class="small">
-      এটি একটি ডেমো প্ল্যাটফর্ম। এখানে বাস্তব অর্থ জমা বা উত্তোলন হয় না।
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Demo Request</h2>
-    <p>পরীক্ষামূলক অনুরোধ তৈরি করুন।</p>
-
-    <select id="requestType">
-      <option value="deposit">Demo Deposit Request</option>
-      <option value="withdraw">Demo Withdrawal Request</option>
-    </select>
-
-    <input
-      id="requestAmount"
-      type="number"
-      min="1"
-      max="1000000"
-      placeholder="পরিমাণ লিখুন"
-    >
-
-    <button id="submitRequestBtn" onclick="makeRequest()">
-      Submit Demo Request
+  <section id="homePage" class="page active">
+    <div class="banner">
+      <strong>Welcome to MR9PRO</strong>
+      <span>কাজ সম্পন্ন করুন, নিয়ম মেনে পুরস্কার অর্জন করুন</span>
+    </div>
+    <div class="balance-card">
+      <div class="eyebrow">NET BALANCE</div>
+      <div class="balance" id="balanceText">৳ 0.00</div>
+      <div class="wallet-actions">
+        <button onclick="showPage('payout')">＋ DEPOSIT</button>
+        <button onclick="showPage('payout')">▣ WITHDRAW</button>
+      </div>
+    </div>
+    <div class="section-head">
+      <h2>▰ MAIN SERVICES</h2>
+      <button onclick="showPage('services')">VIEW ALL</button>
+    </div>
+    <div class="service-grid">
+      <button class="service" onclick="showPage('plans')"><span class="ico">♛</span>Plans</button>
+      <button class="service" onclick="showPage('work')"><span class="ico">▣</span>Work</button>
+      <button class="service" onclick="showPage('history')"><span class="ico">◴</span>History</button>
+      <button class="service" onclick="showPage('account')"><span class="ico">⚙</span>Profile</button>
+      <button class="service" onclick="showPage('analysis')"><span class="ico">⌁</span>Analysis</button>
+      <button class="service" onclick="showPage('support')"><span class="ico">☏</span>Support</button>
+      <button class="service" onclick="showPage('refer')"><span class="ico">♟</span>Refer</button>
+      <button class="service" onclick="showPage('payout')"><span class="ico">⇄</span>Payout</button>
+    </div>
+    <button class="free-card" onclick="showPage('freeIncome')">
+      <span class="gift">♔</span>
+      <span class="free-copy"><strong>Free Income</strong><span>Earn rewards every day</span></span>
+      <span class="new">NEW</span>
     </button>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>My Request History</h2>
-    <div id="myRequests">কোনো অনুরোধ নেই।</div>
-  </div>
+  <section id="plansPage" class="page">
+    <div class="section-head"><h2>VIP Plans</h2><span class="status">FREE PLANS</span></div>
+    <p class="muted">সব প্যাকেজ আপাতত বিনামূল্যে। কোনো টাকা জমা বা লাভের নিশ্চয়তা নেই।</p>
+    <div id="plansList"></div>
+  </section>
 
-  <button class="danger" onclick="logout()">Logout</button>
+  <section id="workPage" class="page">
+    <h2>Available Work</h2>
+    <p class="muted">এখানে Admin কর্তৃক প্রকাশিত কাজ দেখা যাবে। কাজ সম্পন্ন করে প্রমাণ জমা দিন।</p>
+    <div id="taskList" class="card"><div class="empty">এখনো কোনো কাজ প্রকাশ করা হয়নি।</div></div>
+  </section>
 
-</section>
+  <section id="historyPage" class="page">
+    <h2>History</h2>
+    <div class="card"><div id="historyList" class="empty">এখনো কোনো অনুরোধ নেই।</div></div>
+  </section>
 
-<section id="adminPanel" class="hidden">
+  <section id="accountPage" class="page">
+    <h2>My Account</h2>
+    <div class="card">
+      <p><b>নাম:</b> <span id="profileName">-</span></p>
+      <p><b>Email:</b> <span id="profileEmail">-</span></p>
+      <p><b>Member ID:</b> <span id="profileId">-</span></p>
+      <p><b>Plan:</b> <span id="activePlan">Starter (Free)</span></p>
+      <button class="danger" onclick="logout()">Logout</button>
+    </div>
+  </section>
 
-  <div class="card">
-    <h2>MR9PRO Admin Dashboard</h2>
-    <p>অ্যাডমিন কন্ট্রোল প্যানেল</p>
-    <p>মোট ইউজার: <b id="userCount">0</b></p>
-    <button onclick="loadAdmin()">Refresh Data</button>
-  </div>
+  <section id="servicesPage" class="page">
+    <h2>All Services</h2>
+    <div class="card">
+      <p>Plans · Work · History · Profile · Analysis · Support · Refer · Payout · Free Income</p>
+    </div>
+  </section>
 
-  <div class="card">
-    <h2>Registered Users</h2>
-    <div id="allUsers"></div>
-  </div>
+  <section id="analysisPage" class="page">
+    <h2>Analysis</h2>
+    <div class="card"><p class="muted">আপনার অনুমোদিত কাজ ও আয়ের সারাংশ এখানে দেখানো হবে।</p><div id="analysisSummary">এখনো কোনো অনুমোদিত আয়ের তথ্য নেই।</div></div>
+  </section>
 
-  <div class="card">
-    <h2>Demo Requests</h2>
-    <div id="allRequests"></div>
-  </div>
+  <section id="supportPage" class="page">
+    <h2>Support</h2>
+    <div class="card">
+      <p class="muted">সাহায্যের জন্য আপনার সমস্যা লিখুন।</p>
+      <textarea id="supportMessage" rows="4" placeholder="আপনার সমস্যা লিখুন"></textarea>
+      <button class="primary" onclick="sendSupport()">Submit</button>
+    </div>
+  </section>
 
-  <button class="danger" onclick="logout()">Admin Logout</button>
+  <section id="referPage" class="page">
+    <h2>Refer & Earn</h2>
+    <div class="card">
+      <p class="muted">আপনার Referral ID</p>
+      <p id="refCode" style="font-weight:900;font-size:20px">-</p>
+      <p class="muted">রেফারেল কমিশন চালুর আগে Admin-এর মাধ্যমে নিয়ম ও যোগ্যতা নির্ধারণ করতে হবে।</p>
+      <button class="primary" onclick="copyReferral()">Copy Referral ID</button>
+    </div>
+  </section>
 
-</section>
+  <section id="payoutPage" class="page">
+    <h2>Deposit / Withdraw</h2>
+    <div class="card">
+      <p class="muted">এই সংস্করণে কোনো বাস্তব টাকা লেনদেন চালু নেই। নিরাপদ পেমেন্ট ব্যবস্থা ও Admin যাচাই যুক্ত হওয়ার পর এই সুবিধা চালু হবে।</p>
+      <p><b>সমর্থিত পদ্ধতি:</b> bKash · Nagad · Rocket</p>
+    </div>
+  </section>
 
+  <section id="freeIncomePage" class="page">
+    <h2>Free Income</h2>
+    <div class="card">
+      <p class="muted">এখানে Admin-এর প্রকাশ করা বিনামূল্যের কাজ ও অফার দেখা যাবে। কোনো কাজ এখনো প্রকাশ করা হয়নি।</p>
+      <button class="primary" onclick="showPage('work')">View Available Work</button>
+    </div>
+  </section>
+
+  <section id="adminPage" class="page">
+    <h2>Admin Dashboard</h2>
+    <div class="card">
+      <h3>নতুন কাজ প্রকাশ করুন</h3>
+      <label>কাজের নাম</label><input id="taskTitle" placeholder="যেমন: একটি ওয়েবসাইট ভিজিট করুন">
+      <label>কাজের বিবরণ</label><textarea id="taskDescription" rows="3" placeholder="কীভাবে কাজটি করতে হবে"></textarea>
+      <label>পুরস্কার (৳)</label><input id="taskReward" type="number" min="0" placeholder="যেমন ১০">
+      <button class="primary" onclick="createTask()">Publish Task</button>
+    </div>
+    <div class="card"><h3>প্রকাশিত কাজ</h3><div id="adminTaskList"></div></div>
+  </section>
 </main>
 
-<footer>© 2026 MR9PRO | Demo Platform</footer>
+<nav class="bottom-nav">
+  <button class="navbtn active" data-page="home" onclick="showPage('home')"><span class="navico">⌂</span>Home</button>
+  <button class="navbtn" data-page="plans" onclick="showPage('plans')"><span class="navico">♛</span>Plans</button>
+  <button class="navbtn" data-page="work" onclick="showPage('work')"><span class="navico">▣</span>Work</button>
+  <button class="navbtn" data-page="account" onclick="showPage('account')"><span class="navico">●</span>Account</button>
+</nav>
+</div>
+
+<footer>© 2026 MR9PRO | Digital Platform</footer>
 
 <script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {getFirestore,doc,setDoc,getDoc,collection,getDocs,addDoc,query,where,serverTimestamp,updateDoc,orderBy} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  where,
-  serverTimestamp,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",
-  authDomain: "mr9pro-c1631.firebaseapp.com",
-  projectId: "mr9pro-c1631",
-  storageBucket: "mr9pro-c1631.firebasestorage.app",
-  messagingSenderId: "519203001702",
-  appId: "1:519203001702:web:1d1a1aeb31d912185624a7",
-  measurementId: "G-5VGMJDD5RN"
+const firebaseConfig={
+ apiKey:"AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",
+ authDomain:"mr9pro-c1631.firebaseapp.com",
+ projectId:"mr9pro-c1631",
+ storageBucket:"mr9pro-c1631.firebasestorage.app",
+ messagingSenderId:"519203001702",
+ appId:"1:519203001702:web:1d1a1aeb31d912185624a7",
+ measurementId:"G-5VGMJDD5RN"
 };
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+let authMode="login";
+let currentProfile=null;
 
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-
-let registrationInProgress = false;
-let requestInProgress = false;
-
-
-// PAGE CONTROL
-
-window.page = function(id){
-
-  document.querySelectorAll("main > section").forEach(s=>{
-    s.classList.add("hidden");
-  });
-
-  document.getElementById(id).classList.remove("hidden");
-
+const $=id=>document.getElementById(id);
+function showMessage(msg){$("message").textContent=msg}
+function setAuthScreen(show){
+ $("authScreen").classList.toggle("hidden",!show);
+ $("appShell").classList.toggle("hidden",show);
+}
+function updateAuthView(){
+ $("authTitle").textContent=authMode==="login"?"Welcome to MR9PRO":"Create Account";
+ $("authSubmit").textContent=authMode==="login"?"Login":"Register Now";
+ $("registerFields").classList.toggle("hidden",authMode==="login");
+ showMessage("");
+}
+window.toggleAuth=()=>{
+ authMode=authMode==="login"?"register":"login";
+ updateAuthView();
 };
-
-
-// REGISTRATION
-
-window.register = async function(){
-
-  if(registrationInProgress) return;
-
-  try{
-
-    const name = document.getElementById("regName").value.trim();
-    const email = document.getElementById("regEmail").value.trim();
-    const password = document.getElementById("regPass").value;
-
-    if(!name) throw Error("আপনার নাম লিখুন");
-    if(!email) throw Error("Email লিখুন");
-    if(password.length < 6){
-      throw Error("কমপক্ষে ৬ অক্ষরের Password দিন");
-    }
-
-    registrationInProgress = true;
-
-    const credential = await createUserWithEmailAndPassword(
-      auth,email,password
-    );
-
-    await setDoc(doc(db,"users",credential.user.uid),{
-      name:name,
-      email:email,
-      role:"user",
-      createdAt:serverTimestamp()
-    });
-
-    registrationInProgress = false;
-
-    alert("Registration সফল হয়েছে!");
-
-    await showAccount(credential.user);
-
-  }catch(e){
-
-    registrationInProgress = false;
-    console.error(e);
-    alert("Registration Error: "+e.message);
-
-  }
-
-};
-
-
-// LOGIN
-
-window.login = async function(){
-
-  try{
-
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPass").value;
-
-    if(!email) throw Error("Email লিখুন");
-    if(!password) throw Error("Password লিখুন");
-
-    await signInWithEmailAndPassword(auth,email,password);
-
-  }catch(e){
-
-    console.error(e);
-
-    if(e.code==="auth/invalid-credential"){
-      alert("ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে");
-    }
-    else if(e.code==="auth/invalid-email"){
-      alert("সঠিক Email লিখুন");
-    }
-    else if(e.code==="auth/too-many-requests"){
-      alert("কিছুক্ষণ পরে আবার চেষ্টা করুন");
-    }
-    else{
-      alert("Login Error: "+e.message);
-    }
-
-  }
-
-};
-
-
-// ACCOUNT CONTROL
-
-async function showAccount(user){
-
-  const snap = await getDoc(doc(db,"users",user.uid));
-
-  if(!snap.exists()){
-
-    alert("অ্যাকাউন্টের তথ্য পাওয়া যায়নি।");
-    await signOut(auth);
-    return;
-
-  }
-
-  const data = snap.data();
-
-  if(data.role==="admin"){
-
-    page("adminPanel");
-    document.getElementById("topStatus").textContent="ADMIN";
-
-    await loadAdmin();
-
+window.submitAuth=async()=>{
+ const email=$("authEmail").value.trim();
+ const password=$("authPassword").value;
+ try{
+  showMessage("অপেক্ষা করুন...");
+  if(!email||!password)throw Error("Email ও Password লিখুন");
+  if(authMode==="register"){
+   const name=$("regName").value.trim();
+   if(!name)throw Error("আপনার নাম লিখুন");
+   if(password.length<6)throw Error("Password কমপক্ষে ৬ অক্ষরের হতে হবে");
+   const cred=await createUserWithEmailAndPassword(auth,email,password);
+   await setDoc(doc(db,"users",cred.user.uid),{name,email,role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
   }else{
-
-    page("userPanel");
-    document.getElementById("topStatus").textContent="USER";
-    document.getElementById("userName").textContent=data.name || "User";
-
-    await loadMyRequests();
-
+   await signInWithEmailAndPassword(auth,email,password);
   }
-
-}
-
-
-// REQUEST SUBMISSION
-
-window.makeRequest = async function(){
-
-  if(requestInProgress) return;
-
-  const amount = Number(document.getElementById("requestAmount").value);
-  const type = document.getElementById("requestType").value;
-  const btn = document.getElementById("submitRequestBtn");
-
-  if(!auth.currentUser){
-    alert("আগে Login করুন");
-    return;
-  }
-
-  if(!Number.isFinite(amount) || amount < 1 || amount > 1000000){
-    alert("১ থেকে ১০০০০০০ এর মধ্যে পরিমাণ লিখুন");
-    return;
-  }
-
-  requestInProgress = true;
-  btn.disabled = true;
-  btn.textContent = "Submitting...";
-
-  try{
-
-    await addDoc(collection(db,"requests"),{
-      uid:auth.currentUser.uid,
-      type:type,
-      amount:amount,
-      status:"pending",
-      createdAt:serverTimestamp()
-    });
-
-    document.getElementById("requestAmount").value = "";
-
-    alert("ডেমো অনুরোধ জমা হয়েছে");
-
-    await loadMyRequests();
-
-  }catch(e){
-
-    console.error(e);
-    alert("সমস্যা হয়েছে: "+e.message);
-
-  }finally{
-
-    requestInProgress = false;
-    btn.disabled = false;
-    btn.textContent = "Submit Demo Request";
-
-  }
-
+ }catch(e){
+  console.error(e);
+  showMessage("সমস্যা: "+(e.code||e.message));
+ }
 };
-
-
-// TEXT HELPER
-
-function addText(parent,text){
-
-  const p = document.createElement("p");
-  p.textContent = text;
-  parent.appendChild(p);
-
-  return p;
-
-}
-
-
-// USER REQUEST HISTORY
-
-async function loadMyRequests(){
-
-  if(!auth.currentUser) return;
-
-  const area = document.getElementById("myRequests");
-  area.replaceChildren();
-
-  const q = query(
-    collection(db,"requests"),
-    where("uid","==",auth.currentUser.uid)
-  );
-
-  const result = await getDocs(q);
-
-  if(result.empty){
-
-    addText(area,"কোনো অনুরোধ নেই");
-    return;
-
-  }
-
-  result.forEach(d=>{
-
-    const x = d.data();
-    const box = document.createElement("div");
-
-    box.className="item";
-
-    addText(box,x.type+" | ৳ "+x.amount);
-    addText(box,"Status: "+x.status);
-
-    area.appendChild(box);
-
-  });
-
-}
-
-
-// ADMIN DASHBOARD
-
-window.loadAdmin = async function(){
-
-  try{
-
-    if(!auth.currentUser) return;
-
-    const profile = await getDoc(doc(db,"users",auth.currentUser.uid));
-
-    if(!profile.exists() || profile.data().role!=="admin"){
-      alert("Admin permission নেই");
-      return;
-    }
-
-    const users = await getDocs(collection(db,"users"));
-
-    document.getElementById("userCount").textContent=users.size;
-
-    const userArea = document.getElementById("allUsers");
-    userArea.replaceChildren();
-
-    users.forEach(d=>{
-
-      const x = d.data();
-      const box = document.createElement("div");
-
-      box.className="item";
-
-      addText(
-        box,
-        (x.name||"User")+" | "+(x.email||"")+" | "+(x.role||"user")
-      );
-
-      userArea.appendChild(box);
-
-    });
-
-
-    const requests = await getDocs(collection(db,"requests"));
-
-    const requestArea = document.getElementById("allRequests");
-    requestArea.replaceChildren();
-
-    if(requests.empty){
-      addText(requestArea,"কোনো অনুরোধ নেই");
-    }
-
-    requests.forEach(d=>{
-
-      const x = d.data();
-      const box = document.createElement("div");
-
-      box.className="item";
-
-      addText(box,x.type+" | ৳ "+x.amount+" | "+x.status);
-      addText(box,"User ID: "+x.uid);
-
-      if(x.status==="pending"){
-
-        const btn = document.createElement("button");
-
-        btn.textContent="Mark Reviewed";
-        btn.onclick=()=>reviewRequest(d.id);
-
-        box.appendChild(btn);
-
-      }
-
-      requestArea.appendChild(box);
-
-    });
-
-  }catch(e){
-
-    alert("Admin data load error: "+e.message);
-    console.error(e);
-
-  }
-
+window.showPage=(name)=>{
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ const target=$(name+"Page");
+ if(target)target.classList.add("active");
+ document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+ if(name==="work")loadTasks();
+ if(name==="history")loadHistory();
+ if(name==="admin")loadAdminTasks();
 };
-
-
-// ADMIN REVIEW
-
-async function reviewRequest(id){
-
-  try{
-
-    await updateDoc(doc(db,"requests",id),{
-      status:"reviewed",
-      reviewedAt:serverTimestamp()
-    });
-
-    alert("অনুরোধটি পর্যালোচনা করা হয়েছে");
-
-    await loadAdmin();
-
-  }catch(e){
-
-    alert(e.message);
-    console.error(e);
-
-  }
-
+function money(v){return "৳ "+Number(v||0).toFixed(2)}
+function safeText(el,value){el.textContent=value??""}
+async function loadProfile(user){
+ const snap=await getDoc(doc(db,"users",user.uid));
+ if(!snap.exists()){
+  await setDoc(doc(db,"users",user.uid),{name:user.displayName||"Member",email:user.email||"",role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
+  return loadProfile(user);
+ }
+ currentProfile=snap.data();
+ const name=currentProfile.name||"Member";
+ safeText($("headerName"),name);
+ safeText($("avatar"),name.slice(0,2).toUpperCase());
+ safeText($("userId"),"ID: "+user.uid.slice(0,12).toUpperCase());
+ safeText($("balanceText"),money(currentProfile.balance));
+ safeText($("profileName"),name);
+ safeText($("profileEmail"),user.email);
+ safeText($("profileId"),user.uid);
+ safeText($("activePlan"),(currentProfile.activePlan||"Starter")+" (Free)");
+ safeText($("refCode"),user.uid.slice(0,10).toUpperCase());
+ if(currentProfile.role==="admin"){
+  const adminBtn=document.createElement("button");
+  adminBtn.className="primary";
+  adminBtn.textContent="Open Admin Panel";
+  adminBtn.onclick=()=>showPage("admin");
+  const card=$("accountPage").querySelector(".card");
+  if(!$("openAdminButton")){adminBtn.id="openAdminButton";card.appendChild(adminBtn)}
+ }
 }
-
-
-// LOGOUT
-
-window.logout = async function(){
-
-  try{
-
-    await signOut(auth);
-
-    page("welcome");
-
-    document.getElementById("topStatus").textContent="DEMO PLATFORM";
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
+function renderPlans(){
+ const plans=[["Starter","ফ্রি","প্রাথমিক সদস্য সুবিধা"],["Bronze","ফ্রি","সাধারণ কাজ ও অফার দেখুন"],["Silver","ফ্রি","যোগ্যতা অনুযায়ী অতিরিক্ত সুবিধা"],["Gold","ফ্রি","Admin ঘোষিত বিশেষ সুবিধা"]];
+ $("plansList").replaceChildren();
+ plans.forEach(([name,price,desc])=>{
+  const box=document.createElement("div");box.className="plan";
+  const top=document.createElement("div");top.className="plan-top";
+  const h=document.createElement("h3");h.textContent="MR9PRO "+name.toUpperCase();top.appendChild(h);
+  const body=document.createElement("div");body.className="plan-body";
+  const row=document.createElement("div");row.className="row";
+  const p=document.createElement("span");p.className="price";p.textContent=price;
+  const active=document.createElement("span");active.className="status";active.textContent=currentProfile?.activePlan===name?"✓ Active":"Free Plan";
+  row.append(p,active);
+  const text=document.createElement("p");text.className="muted";text.textContent=desc;
+  const btn=document.createElement("button");btn.className="primary";btn.textContent=currentProfile?.activePlan===name?"Current Plan":"Activate Free Plan";
+  btn.disabled=currentProfile?.activePlan===name;
+  btn.onclick=()=>activatePlan(name);
+  body.append(row,text,btn);box.append(top,body);$("plansList").appendChild(box);
+ });
+}
+async function activatePlan(name){
+ try{
+  if(!auth.currentUser)return;
+  await updateDoc(doc(db,"users",auth.currentUser.uid),{activePlan:name,planUpdatedAt:serverTimestamp()});
+  currentProfile.activePlan=name;renderPlans();await loadProfile(auth.currentUser);
+  alert(name+" Plan চালু হয়েছে। এটি বিনামূল্যের সদস্যপদ; কোনো অর্থ প্রদান হয়নি।");
+ }catch(e){alert("Plan update error: "+e.message)}
+}
+window.createTask=async()=>{
+ try{
+  if(currentProfile?.role!=="admin")throw Error("শুধু Admin কাজ প্রকাশ করতে পারবেন");
+  const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
+  if(!title||!description)throw Error("কাজের নাম ও বিবরণ লিখুন");
+  if(!Number.isFinite(reward)||reward<0||reward>100000)throw Error("সঠিক পুরস্কারের পরিমাণ লিখুন");
+  await addDoc(collection(db,"tasks"),{title,description,reward,status:"active",createdBy:auth.currentUser.uid,createdAt:serverTimestamp()});
+  $("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
+  alert("কাজ প্রকাশ হয়েছে");loadAdminTasks();loadTasks();
+ }catch(e){alert("কাজ প্রকাশ করা যায়নি: "+e.message)}
 };
-
-
-// AUTHENTICATION LISTENER
-
-onAuthStateChanged(auth,async user=>{
-
-  if(registrationInProgress) return;
-
-  if(!user){
-
-    page("welcome");
-    document.getElementById("topStatus").textContent="DEMO PLATFORM";
-    return;
-
-  }
-
-  try{
-
-    await showAccount(user);
-
-  }catch(e){
-
-    console.error(e);
-    alert("Account Error: "+e.message);
-
-  }
-
-});
-
-</script>
-
-</body>
-</html>
+async function loadTasks(){
+ const area=$("taskList");area.replaceChildren();
+ try{
+  const snap=await
