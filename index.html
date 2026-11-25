@@ -224,38 +224,54 @@ await loadMyRequests();
   
 }  
   
-window.makeRequest = async function(){  
+
+window.makeRequest = async function(){
+
+  if(requestInProgress) return;
+
+  const amount = Number(document.getElementById("requestAmount").value);
+  const type = document.getElementById("requestType").value;
+  const btn = document.getElementById("submitRequestBtn");
+
+  if(!auth.currentUser){
+    alert("আগে Login করুন");
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount < 1 || amount > 1000000){
+    alert("১ থেকে ১০০০০০০ এর মধ্যে পরিমাণ লিখুন");
+    return;
+  }
+
+  requestInProgress = true;
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  try{
+    await addDoc(collection(db,"requests"),{
+      uid:auth.currentUser.uid,
+      type:type,
+      amount:amount,
+      status:"pending",
+      createdAt:serverTimestamp()
+    });
+
+    document.getElementById("requestAmount").value = "";
+    alert("ডেমো অনুরোধ জমা হয়েছে");
+    await loadMyRequests();
+
+  }catch(e){
+    alert("সমস্যা হয়েছে: " + e.message);
+
+  }finally{
+    requestInProgress = false;
+    btn.disabled = false;
+    btn.textContent = "Submit Demo Request";
+  }
+
+};
   
-try{  
-  
-if(!auth.currentUser) throw Error("আগে Login করুন");  
-  
-const amount = Number(document.getElementById("requestAmount").value);  
-const type = document.getElementById("requestType").value;  
-  
-if(!Number.isFinite(amount)||amount<1||amount>1000000){  
-throw Error("১ থেকে ১০০০০০০ এর মধ্যে পরিমাণ লিখুন");  
-}  
-  
-await addDoc(collection(db,"requests"),{  
-uid:auth.currentUser.uid,  
-type:type,  
-amount:amount,  
-status:"pending",  
-createdAt:serverTimestamp()  
-});  
-  
-document.getElementById("requestAmount").value="";  
-  
-alert("ডেমো অনুরোধ জমা হয়েছে");  
-  
-await loadMyRequests();  
-  
-}catch(e){  
-alert(e.message);  
-}  
-  
-};  
+}catch 
   
 function addText(parent,text){  
   
