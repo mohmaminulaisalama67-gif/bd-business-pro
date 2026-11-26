@@ -1,243 +1,217 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#df3438">
 <title>MR9PRO | Digital Platform</title>
 <style>
-:root{--red:#df3438;--red2:#bd2028;--ink:#172033;--muted:#758194;--bg:#f6f7fa;--line:#edf0f4;--green:#13ad83}
+:root{--red:#df3438;--dark:#bd2028;--ink:#172033;--muted:#758194;--bg:#f5f6f9;--line:#e9edf2;--green:#0b9b70}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif;padding-bottom:88px}
-button,input,textarea,select{font:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Bengali",sans-serif;padding-bottom:82px}
+button,input,textarea{font:inherit}
 button{cursor:pointer}
-header{background:#fff;padding:18px 18px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px #18243a0a}
-.identity{display:flex;align-items:center;gap:12px;min-width:0}
-.avatar{width:64px;height:64px;border-radius:17px;background:var(--red);color:white;display:grid;place-items:center;font-size:27px;flex-shrink:0}
-.idline{font-size:14px;color:#758194;font-weight:700;letter-spacing:.4px}
-.username{font-size:25px;font-weight:800;margin-top:2px;overflow-wrap:anywhere}
-.iconbtn{border:0;background:#fff;color:#687487;font-size:28px;padding:8px;position:relative}
-.dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--red);right:7px;top:7px}
-main{max-width:720px;margin:auto;padding:16px}
-.page{display:none}.page.active{display:block}
-.banner{height:112px;border-radius:22px;background:linear-gradient(115deg,#121820,#34302a 60%,#15191f);color:#fff;padding:20px;margin:4px 0 28px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
-.banner strong{font-size:19px}.banner span{font-size:13px;color:#e5e7eb;margin-top:6px}
-.balance-card{background:linear-gradient(135deg,#e23b3e,#c51f28);color:white;border-radius:34px;padding:27px 25px 24px;box-shadow:0 17px 32px #d52e3526;margin-bottom:34px;position:relative;overflow:hidden}
-.balance-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#ffffff0b;right:-90px;top:-100px}
-.eyebrow{font-weight:800;letter-spacing:1px;font-size:15px}
-.balance{font-size:clamp(38px,10vw,58px);font-weight:900;margin:22px 0 32px;line-height:1}
-.wallet-actions{display:flex;background:#ffffff20;border-radius:20px;overflow:hidden}
-.wallet-actions button{flex:1;background:transparent;border:0;color:#fff;font-size:17px;font-weight:800;padding:17px 8px}
-.wallet-actions button+button{border-left:1px solid #ffffff45}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 18px}
-.section-head h2{font-size:23px;margin:0}
-.section-head button{border:0;background:none;color:var(--red);font-weight:800}
-.service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:28px}
-.service{border:0;background:#fff;border-radius:23px;min-height:132px;padding:15px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-shadow:0 7px 22px #18243a08;color:#5e6b7e;font-weight:700}
-.service .ico{width:62px;height:62px;border-radius:18px;background:#f8fafc;display:grid;place-items:center;font-size:30px;color:#536174}
-.service:active{transform:scale(.98)}
-.free-card{background:#fff;border:0;border-radius:25px;width:100%;padding:20px 18px;display:flex;align-items:center;gap:15px;text-align:left;box-shadow:0 7px 22px #18243a08}
-.gift{width:72px;height:72px;border-radius:20px;background:#fff0f0;color:var(--red);display:grid;place-items:center;font-size:34px;flex-shrink:0}
-.free-copy{flex:1}.free-copy strong{font-size:22px;display:block}.free-copy span{color:var(--muted);display:block;margin-top:5px}
-.new{background:var(--red);color:#fff;border-radius:14px;padding:9px 14px;font-weight:800}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 6px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #18243a0d;z-index:10}
-.navbtn{border:0;background:#fff;color:#9aa5b4;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:700;padding:7px 2px}
-.navbtn .navico{font-size:26px}.navbtn.active{color:var(--red)}.navbtn.active:before{content:"";height:4px;width:45px;border-radius:0 0 5px 5px;background:var(--red);position:absolute;top:0}
-.card{background:#fff;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 7px 22px #18243a08}
-h2{margin:0 0 14px;font-size:22px}
-.muted{color:var(--muted);font-size:14px;line-height:1.5}
-.primary{background:var(--red);color:#fff;border:0;border-radius:13px;padding:13px 17px;font-weight:800}
-.secondary{background:#f0f2f5;color:#3d4858;border:0;border-radius:13px;padding:13px 17px;font-weight:700}
-.danger{background:#a92d36;color:#fff;border:0;border-radius:12px;padding:12px 16px}
-input,textarea,select{width:100%;padding:13px 14px;border:1px solid #e0e5eb;border-radius:12px;background:#fff;margin:7px 0;color:var(--ink)}
-label{display:block;font-weight:700;font-size:14px;margin-top:10px}
-.plan{border:1px solid #edf0f4;border-radius:22px;overflow:hidden;margin:15px 0;background:#fff}
-.plan-top{padding:20px;background:linear-gradient(120deg,#303943,#7a7370);color:white}
-.plan-top h3{font-size:24px;margin:0 0 8px}.plan-body{padding:18px}
-.price{font-size:27px;color:var(--red);font-weight:900}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.status{color:var(--green);font-weight:800}
-.task{border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0}
-.task h3{margin:0 0 7px}.task .meta{color:var(--muted);font-size:13px;margin:8px 0}
-.empty{text-align:center;padding:25px;color:var(--muted)}
+button:disabled{opacity:.55;cursor:not-allowed}
 .hidden{display:none!important}
-#authScreen{max-width:520px;margin:24px auto;padding:16px}
-#authScreen .card{padding:24px}
-#authScreen h1{font-size:30px}
-#message{white-space:pre-wrap;color:var(--red);font-size:14px;margin-top:10px}
-footer{text-align:center;color:#9aa5b4;padding:24px;font-size:12px}
-@media(max-width:430px){main{padding:13px}.service-grid{gap:9px}.service{min-height:119px;border-radius:19px;font-size:13px}.service .ico{width:55px;height:55px}.section-head h2{font-size:21px}.balance-card{padding:24px 20px}.wallet-actions button{font-size:15px}}
+header{background:white;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:4;box-shadow:0 2px 12px #17203310}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:48px;height:48px;border-radius:14px;background:var(--red);color:white;display:grid;place-items:center;font-weight:900;font-size:20px}
+.brand small{color:var(--muted);font-weight:700}
+.brand strong{display:block;font-size:21px}
+main{max-width:720px;margin:auto;padding:15px}
+.page{display:none}
+.page.active{display:block}
+.card{background:white;border-radius:20px;padding:18px;margin:13px 0;box-shadow:0 6px 20px #17203308}
+h2{font-size:22px;margin:4px 0 13px}
+h3{margin:0 0 9px}
+.muted{color:var(--muted);font-size:14px;line-height:1.55}
+label{display:block;font-size:14px;font-weight:700;margin:12px 0 5px}
+input,textarea{width:100%;border:1px solid #dfe4eb;border-radius:12px;padding:13px;background:#fff;color:var(--ink)}
+button.primary{border:0;background:var(--red);color:white;padding:12px 16px;border-radius:12px;font-weight:800}
+button.secondary{border:0;background:#eef1f5;color:#354052;padding:12px 15px;border-radius:12px;font-weight:700}
+button.danger{border:0;background:#a82a32;color:white;padding:11px 14px;border-radius:11px;font-weight:700}
+.full{width:100%;margin-top:12px}
+.msg{font-size:14px;color:var(--red);white-space:pre-wrap;margin-top:10px}
+.hero{background:linear-gradient(120deg,#171c25,#45403d);color:white;padding:22px;border-radius:20px;margin:3px 0 16px}
+.hero strong{font-size:20px}
+.hero p{color:#e1e5eb;margin-bottom:0;font-size:14px}
+.wallet{background:linear-gradient(130deg,#e43c40,#bd2028);color:white;padding:23px;border-radius:25px;margin:15px 0;box-shadow:0 12px 25px #d52e3525}
+.wallet small{font-weight:800;letter-spacing:1px}
+.amount{font-size:42px;font-weight:900;margin:15px 0 20px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.tile{background:white;border:0;border-radius:17px;padding:17px 10px;text-align:center;font-weight:800;color:#566276;box-shadow:0 5px 17px #17203308}
+.tile span{display:block;font-size:25px;margin-bottom:8px}
+.pill{font-size:12px;font-weight:800;color:var(--green);background:#e8f8f2;padding:6px 9px;border-radius:20px}
+.plan{border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;background:white}
+.plan .price{font-size:25px;font-weight:900;color:var(--red)}
+.plan p{font-size:13px;color:var(--muted)}
+.item{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.item p{font-size:14px;color:var(--muted);white-space:pre-wrap}
+.item button{margin:5px 5px 0 0}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:white;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px #17203310;z-index:5}
+.nav{border:0;background:white;color:#929baa;font-size:12px;font-weight:700;padding:6px 2px}
+.nav span{display:block;font-size:22px;margin-bottom:3px}
+.nav.active{color:var(--red)}
+#auth{max-width:500px;margin:25px auto;padding:15px}
+#auth .card{padding:23px}
+footer{text-align:center;color:#9aa5b4;font-size:12px;padding:20px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
 
-<div id="authScreen" class="hidden">
-  <div class="card">
-    <div style="color:var(--red);font-weight:900;font-size:25px">MR9PRO</div>
-    <h1 id="authTitle">Welcome to MR9PRO</h1>
-    <p class="muted">আপনার ডিজিটাল অ্যাকাউন্ট তৈরি করুন অথবা লগইন করুন।</p>
-    <div id="registerFields" class="hidden">
-      <label>আপনার নাম</label><input id="regName" placeholder="নাম লিখুন">
-    </div>
-    <label>Email</label><input id="authEmail" type="email" placeholder="আপনার Email">
-    <label>Password</label><input id="authPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর">
-    <button id="authSubmit" class="primary" style="width:100%;margin-top:12px" onclick="submitAuth()">Login</button>
-    <button class="secondary" style="width:100%;margin-top:8px" onclick="toggleAuth()">নতুন অ্যাকাউন্ট / Login</button>
-    <div id="message"></div>
-  </div>
+<section id="auth">
+<div class="card">
+<div class="brand">
+<div class="logo">MR</div>
+<div><small>DIGITAL PLATFORM</small><strong>MR9PRO</strong></div>
 </div>
+<h2 id="authHeading" style="margin-top:22px">Login</h2>
+<p class="muted">আপনার অ্যাকাউন্টে প্রবেশ করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+<div id="nameWrap" class="hidden">
+<label>আপনার নাম</label>
+<input id="name" placeholder="নাম লিখুন">
+</div>
+<label>Email</label>
+<input id="email" type="email" autocomplete="email" placeholder="আপনার Email">
+<label>Password</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="কমপক্ষে ৬ অক্ষর">
+<button class="primary full" id="authButton">Login</button>
+<button class="secondary full" id="switchAuth">নতুন অ্যাকাউন্ট তৈরি করুন</button>
+<div id="authMessage" class="msg"></div>
+</div>
+</section>
 
-<div id="appShell" class="hidden">
+<div id="app" class="hidden">
 <header>
-  <div class="identity">
-    <div class="avatar" id="avatar">MR</div>
-    <div style="min-width:0">
-      <div class="idline" id="userId">MR9PRO MEMBER</div>
-      <div class="username" id="headerName">Member</div>
-    </div>
-  </div>
-  <button class="iconbtn" onclick="showPage('account')" aria-label="Notifications">♧<span class="dot"></span></button>
+<div class="brand">
+<div class="logo">MR</div>
+<div><small>MR9PRO MEMBER</small><strong id="hello">Member</strong></div>
+</div>
+<button class="secondary" id="logout">Logout</button>
 </header>
 
 <main>
-  <section id="homePage" class="page active">
-    <div class="banner">
-      <strong>Welcome to MR9PRO</strong>
-      <span>কাজ সম্পন্ন করুন, নিয়ম মেনে পুরস্কার অর্জন করুন</span>
-    </div>
-    <div class="balance-card">
-      <div class="eyebrow">NET BALANCE</div>
-      <div class="balance" id="balanceText">৳ 0.00</div>
-      <div class="wallet-actions">
-        <button onclick="showPage('payout')">＋ DEPOSIT</button>
-        <button onclick="showPage('payout')">▣ WITHDRAW</button>
-      </div>
-    </div>
-    <div class="section-head">
-      <h2>▰ MAIN SERVICES</h2>
-      <button onclick="showPage('services')">VIEW ALL</button>
-    </div>
-    <div class="service-grid">
-      <button class="service" onclick="showPage('plans')"><span class="ico">♛</span>Plans</button>
-      <button class="service" onclick="showPage('work')"><span class="ico">▣</span>Work</button>
-      <button class="service" onclick="showPage('history')"><span class="ico">◴</span>History</button>
-      <button class="service" onclick="showPage('account')"><span class="ico">⚙</span>Profile</button>
-      <button class="service" onclick="showPage('analysis')"><span class="ico">⌁</span>Analysis</button>
-      <button class="service" onclick="showPage('support')"><span class="ico">☏</span>Support</button>
-      <button class="service" onclick="showPage('refer')"><span class="ico">♟</span>Refer</button>
-      <button class="service" onclick="showPage('payout')"><span class="ico">⇄</span>Payout</button>
-    </div>
-    <button class="free-card" onclick="showPage('freeIncome')">
-      <span class="gift">♔</span>
-      <span class="free-copy"><strong>Free Income</strong><span>Earn rewards every day</span></span>
-      <span class="new">NEW</span>
-    </button>
-  </section>
+<section id="home" class="page active">
+<div class="hero">
+<strong>Welcome to MR9PRO</strong>
+<p>কাজ সম্পন্ন করুন, নিয়ম মেনে পুরস্কার অর্জন করুন।</p>
+</div>
+<div class="wallet">
+<small>WALLET BALANCE</small>
+<div class="amount" id="balance">৳ 0.00</div>
+<div class="row">
+<button class="secondary" data-go="deposit">＋ Deposit</button>
+<button class="secondary" data-go="withdraw">Withdraw</button>
+</div>
+</div>
+<h2>Main Services</h2>
+<div class="grid">
+<button class="tile" data-go="plans"><span>♛</span>VIP Plans</button>
+<button class="tile" data-go="work"><span>▣</span>Work & Claim</button>
+<button class="tile" data-go="history"><span>◷</span>History</button>
+<button class="tile" data-go="profile"><span>⚙</span>Profile</button>
+<button class="tile" data-go="deposit"><span>⇧</span>Deposit</button>
+<button class="tile" data-go="support"><span>☏</span>Support</button>
+</div>
+</section>
 
-  <section id="plansPage" class="page">
-    <div class="section-head"><h2>VIP Plans</h2><span class="status">FREE PLANS</span></div>
-    <p class="muted">সব প্যাকেজ আপাতত বিনামূল্যে। কোনো টাকা জমা বা লাভের নিশ্চয়তা নেই।</p>
-    <div id="plansList"></div>
-  </section>
+<section id="plans" class="page">
+<h2>VIP Membership Plans</h2>
+<p class="muted">প্যাকেজের মূল্য সদস্যপদ/সুবিধার ফি। প্যাকেজ কিনলে নির্দিষ্ট লাভ বা টাকা ফেরতের নিশ্চয়তা নেই।</p>
+<div id="plansList"></div>
+</section>
 
-  <section id="workPage" class="page">
-    <h2>Available Work</h2>
-    <p class="muted">এখানে Admin কর্তৃক প্রকাশিত কাজ দেখা যাবে। কাজ সম্পন্ন করে প্রমাণ জমা দিন।</p>
-    <div id="taskList" class="card"><div class="empty">এখনো কোনো কাজ প্রকাশ করা হয়নি।</div></div>
-  </section>
+<section id="deposit" class="page">
+<h2>Deposit Request</h2>
+<div class="card">
+<p class="muted">শুধু Nagad Send Money করুন। Admin যাচাই করে অনুমোদন করলে Wallet-এ জমা দেখাবে।</p>
+<div class="item">
+<div class="row"><b>Nagad</b><b>01980371630</b></div>
+<button class="secondary" id="copyNumber">নম্বর কপি করুন</button>
+</div>
+<label>টাকার পরিমাণ (৳)</label>
+<input id="depositAmount" type="number" min="10" max="50000" placeholder="যেমন ৫০০">
+<label>Transaction ID</label>
+<input id="depositTxn" maxlength="80" placeholder="Nagad Transaction ID">
+<button class="primary full" id="sendDeposit">Deposit Request জমা দিন</button>
+<div id="depositMsg" class="msg"></div>
+</div>
+<div class="card"><h3>আমার Deposit</h3><div id="myDeposits" class="muted">লোড হচ্ছে...</div></div>
+</section>
 
-  <section id="historyPage" class="page">
-    <h2>History</h2>
-    <div class="card"><div id="historyList" class="empty">এখনো কোনো অনুরোধ নেই।</div></div>
-  </section>
+<section id="work" class="page">
+<h2>Available Work & Claim</h2>
+<p class="muted">কাজ সম্পন্ন করে প্রমাণ জমা দিন। Admin যাচাই করে অনুমোদন করলে নির্ধারিত পুরস্কার Wallet-এ যোগ হবে। প্রতিদিন ৳১০০ বা অন্য কোনো নির্দিষ্ট আয়ের নিশ্চয়তা নেই।</p>
+<div id="taskList"></div>
+</section>
 
-  <section id="accountPage" class="page">
-    <h2>My Account</h2>
-    <div class="card">
-      <p><b>নাম:</b> <span id="profileName">-</span></p>
-      <p><b>Email:</b> <span id="profileEmail">-</span></p>
-      <p><b>Member ID:</b> <span id="profileId">-</span></p>
-      <p><b>Plan:</b> <span id="activePlan">Starter (Free)</span></p>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
-  </section>
+<section id="history" class="page">
+<h2>History</h2>
+<div class="card"><div id="historyList" class="muted">লোড হচ্ছে...</div></div>
+</section>
 
-  <section id="servicesPage" class="page">
-    <h2>All Services</h2>
-    <div class="card">
-      <p>Plans · Work · History · Profile · Analysis · Support · Refer · Payout · Free Income</p>
-    </div>
-  </section>
+<section id="withdraw" class="page">
+<h2>Withdraw Request</h2>
+<div class="card">
+<p class="muted">শুধু Wallet-এ থাকা অনুমোদিত ব্যালেন্স থেকে অনুরোধ করুন। Admin যাচাই করবেন।</p>
+<label>পরিমাণ (৳)</label>
+<input id="withdrawAmount" type="number" min="1" placeholder="টাকার পরিমাণ">
+<label>পেমেন্ট নম্বর</label>
+<input id="withdrawNumber" placeholder="আপনার Nagad নম্বর">
+<button class="primary full" id="sendWithdraw">Withdraw Request</button>
+<div id="withdrawMsg" class="msg"></div>
+</div>
+</section>
 
-  <section id="analysisPage" class="page">
-    <h2>Analysis</h2>
-    <div class="card"><p class="muted">আপনার অনুমোদিত কাজ ও আয়ের সারাংশ এখানে দেখানো হবে।</p><div id="analysisSummary">এখনো কোনো অনুমোদিত আয়ের তথ্য নেই।</div></div>
-  </section>
+<section id="profile" class="page">
+<h2>My Account</h2>
+<div class="card">
+<p><b>নাম:</b> <span id="profileName">-</span></p>
+<p><b>Email:</b> <span id="profileEmail">-</span></p>
+<p><b>Member ID:</b> <span id="profileId">-</span></p>
+<p><b>Membership:</b> <span id="profilePlan">-</span></p>
+<button class="danger" id="logout2">Logout</button>
+<button id="adminOpen" class="primary full hidden">Admin Panel খুলুন</button>
+</div>
+</section>
 
-  <section id="supportPage" class="page">
-    <h2>Support</h2>
-    <div class="card">
-      <p class="muted">সাহায্যের জন্য আপনার সমস্যা লিখুন।</p>
-      <textarea id="supportMessage" rows="4" placeholder="আপনার সমস্যা লিখুন"></textarea>
-      <button class="primary" onclick="sendSupport()">Submit</button>
-    </div>
-  </section>
+<section id="support" class="page">
+<h2>Support</h2>
+<div class="card">
+<label>আপনার সমস্যা</label>
+<textarea id="supportText" rows="4" placeholder="সমস্যা লিখুন"></textarea>
+<button class="primary full" id="sendSupport">Submit</button>
+<div id="supportMsg" class="msg"></div>
+</div>
+</section>
 
-  <section id="referPage" class="page">
-    <h2>Refer & Earn</h2>
-    <div class="card">
-      <p class="muted">আপনার Referral ID</p>
-      <p id="refCode" style="font-weight:900;font-size:20px">-</p>
-      <p class="muted">রেফারেল কমিশন চালুর আগে Admin-এর মাধ্যমে নিয়ম ও যোগ্যতা নির্ধারণ করতে হবে।</p>
-      <button class="primary" onclick="copyReferral()">Copy Referral ID</button>
-    </div>
-  </section>
-
-  <section id="payoutPage" class="page">
-    <h2>Deposit</h2>
-    <div class="card">
-      <p class="muted">শুধু Nagad-এ Send Money করুন। Admin যাচাই করে অনুমোদন করলে টাকা Wallet-এ যোগ হবে।</p>
-      <div class="task">
-        <div class="row"><h3>Nagad</h3><b>01980371630</b></div>
-        <button class="secondary" onclick="copyPaymentNumber()">নম্বর কপি করুন</button>
-      </div>
-      <label>কত টাকা পাঠিয়েছেন (৳)</label>
-      <input id="depositAmount" type="number" min="10" max="50000" step="1" placeholder="যেমন ৫০০">
-      <label>Transaction ID</label>
-      <input id="depositTxnId" type="text" maxlength="80" placeholder="Nagad Transaction ID লিখুন">
-      <button class="primary" style="width:100%;margin-top:10px" onclick="submitDeposit()">Deposit Request জমা দিন</button>
-      <p class="muted">সঠিক পরিমাণ ও Transaction ID দিন। একই Transaction ID একবারই জমা দেওয়া যাবে। যাচাই না হওয়া পর্যন্ত টাকা Wallet-এ যোগ হবে না।</p>
-    </div>
-    <div class="card"><h3>আমার Deposit History</h3><div id="myDepositList" class="muted">লোড হচ্ছে...</div></div>
-  </section>
-
-  <section id="freeIncomePage" class="page">
-    <h2>Free Income</h2>
-    <div class="card">
-      <p class="muted">এখানে Admin-এর প্রকাশ করা বিনামূল্যের কাজ ও অফার দেখা যাবে। কোনো কাজ এখনো প্রকাশ করা হয়নি।</p>
-      <button class="primary" onclick="showPage('work')">View Available Work</button>
-    </div>
-  </section>
-
-  <section id="adminPage" class="page">
-    <h2>Admin Dashboard</h2>
-    <div class="card">
-      <h3>নতুন কাজ প্রকাশ করুন</h3>
-      <label>কাজের নাম</label><input id="taskTitle" placeholder="যেমন: একটি ওয়েবসাইট ভিজিট করুন">
-      <label>কাজের বিবরণ</label><textarea id="taskDescription" rows="3" placeholder="কীভাবে কাজটি করতে হবে"></textarea>
-      <label>পুরস্কার (৳)</label><input id="taskReward" type="number" min="0" placeholder="যেমন ১০">
-      <button class="primary" onclick="createTask()">Publish Task</button>
-    </div>
-    <div class="card"><h3>Deposit অনুমোদন</h3><p class="muted">Transaction ID মিলিয়ে তারপর Approve করুন।</p><div id="adminDepositList">লোড হচ্ছে...</div></div>
-    <div class="card"><h3>প্রকাশিত কাজ</h3><div id="adminTaskList"></div></div>
-  </section>
+<section id="admin" class="page">
+<h2>Admin Dashboard</h2>
+<div class="card">
+<h3>নতুন কাজ প্রকাশ</h3>
+<label>কাজের নাম</label>
+<input id="taskTitle" placeholder="কাজের নাম">
+<label>বিবরণ</label>
+<textarea id="taskDescription" rows="3" placeholder="কাজের নিয়ম"></textarea>
+<label>পুরস্কার (৳)</label>
+<input id="taskReward" type="number" min="0" max="5000" placeholder="যাচাইকৃত কাজের পুরস্কার">
+<button class="primary full" id="publishTask">Publish Task</button>
+<div id="taskAdminMsg" class="msg"></div>
+</div>
+<div class="card"><h3>Pending Deposits</h3><div id="adminDeposits">লোড হচ্ছে...</div></div>
+<div class="card"><h3>Pending Work Claims</h3><div id="adminClaims">লোড হচ্ছে...</div></div>
+<div class="card"><h3>Withdraw Requests</h3><div id="adminWithdrawals">লোড হচ্ছে...</div></div>
+</section>
 </main>
 
-<nav class="bottom-nav">
-  <button class="navbtn active" data-page="home" onclick="showPage('home')"><span class="navico">⌂</span>Home</button>
-  <button class="navbtn" data-page="plans" onclick="showPage('plans')"><span class="navico">♛</span>Plans</button>
-  <button class="navbtn" data-page="work" onclick="showPage('work')"><span class="navico">▣</span>Work</button>
-  <button class="navbtn" data-page="account" onclick="showPage('account')"><span class="navico">●</span>Account</button>
+<nav class="bottom">
+<button class="nav active" data-go="home"><span>⌂</span>Home</button>
+<button class="nav" data-go="plans"><span>♛</span>Plans</button>
+<button class="nav" data-go="work"><span>▣</span>Work</button>
+<button class="nav" data-go="profile"><span>●</span>Account</button>
 </nav>
 </div>
 
@@ -246,119 +220,309 @@ footer{text-align:center;color:#9aa5b4;padding:24px;font-size:12px}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc,collection,getDocs,addDoc,query,where,serverTimestamp,updateDoc,orderBy,runTransaction} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import {getFirestore,doc,setDoc,getDoc,collection,addDoc,getDocs,query,where,serverTimestamp,runTransaction} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const firebaseConfig={
- apiKey:"AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",
- authDomain:"mr9pro-c1631.firebaseapp.com",
- projectId:"mr9pro-c1631",
- storageBucket:"mr9pro-c1631.firebasestorage.app",
- messagingSenderId:"519203001702",
- appId:"1:519203001702:web:1d1a1aeb31d912185624a7",
- measurementId:"G-5VGMJDD5RN"
+apiKey:"AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",
+authDomain:"mr9pro-c1631.firebaseapp.com",
+projectId:"mr9pro-c1631",
+storageBucket:"mr9pro-c1631.firebasestorage.app",
+messagingSenderId:"519203001702",
+appId:"1:519203001702:web:1d1a1aeb31d912185624a7",
+measurementId:"G-5VGMJDD5RN"
 };
+
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-let authMode="login";
-let currentProfile=null;
-
 const $=id=>document.getElementById(id);
-function showMessage(msg){$("message").textContent=msg}
-function setAuthScreen(show){
- $("authScreen").classList.toggle("hidden",!show);
- $("appShell").classList.toggle("hidden",show);
+let mode="login",profile=null,selectedPlan="";
+const plans=[500,1000,2000,3000,4000,5000];
+const money=n=>"৳ "+Number(n||0).toFixed(2);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function message(id,t){$(id).textContent=t}
+
+function showPage(name){
+document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===name));
+document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x.dataset.go===name));
+if(name==="plans")renderPlans();
+if(name==="deposit")loadMyDeposits();
+if(name==="work")loadTasks();
+if(name==="history")loadHistory();
+if(name==="admin")loadAdmin();
 }
-function updateAuthView(){
- $("authTitle").textContent=authMode==="login"?"Welcome to MR9PRO":"Create Account";
- $("authSubmit").textContent=authMode==="login"?"Login":"Register Now";
- $("registerFields").classList.toggle("hidden",authMode==="login");
- showMessage("");
-}
-window.toggleAuth=()=>{
- authMode=authMode==="login"?"register":"login";
- updateAuthView();
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+
+$("switchAuth").onclick=()=>{
+mode=mode==="login"?"register":"login";
+$("authHeading").textContent=mode==="login"?"Login":"Create Account";
+$("authButton").textContent=mode==="login"?"Login":"Register Now";
+$("nameWrap").classList.toggle("hidden",mode==="login");
+$("switchAuth").textContent=mode==="login"?"নতুন অ্যাকাউন্ট তৈরি করুন":"আগে অ্যাকাউন্ট আছে? Login";
+message("authMessage","");
 };
-window.submitAuth=async()=>{
- const email=$("authEmail").value.trim();
- const password=$("authPassword").value;
- try{
-  showMessage("অপেক্ষা করুন...");
-  if(!email||!password)throw Error("Email ও Password লিখুন");
-  if(authMode==="register"){
-   const name=$("regName").value.trim();
-   if(!name)throw Error("আপনার নাম লিখুন");
-   if(password.length<6)throw Error("Password কমপক্ষে ৬ অক্ষরের হতে হবে");
-   const cred=await createUserWithEmailAndPassword(auth,email,password);
-   await setDoc(doc(db,"users",cred.user.uid),{name,email,role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
-  }else{
-   await signInWithEmailAndPassword(auth,email,password);
-  }
- }catch(e){
-  console.error(e);
-  showMessage("সমস্যা: "+(e.code||e.message));
- }
+
+$("authButton").onclick=async()=>{
+const email=$("email").value.trim(),password=$("password").value;
+try{
+message("authMessage","অপেক্ষা করুন...");
+if(!email||!password)throw Error("Email ও Password লিখুন।");
+if(mode==="register"){
+const name=$("name").value.trim();
+if(!name)throw Error("আপনার নাম লিখুন।");
+if(password.length<6)throw Error("Password কমপক্ষে ৬ অক্ষরের হতে হবে।");
+const c=await createUserWithEmailAndPassword(auth,email,password);
+await setDoc(doc(db,"users",c.user.uid),{name,email,role:"user",balance:0,activePlan:"None",createdAt:serverTimestamp()});
+}else await signInWithEmailAndPassword(auth,email,password);
+}catch(e){message("authMessage","সমস্যা: "+(e.message||e.code));}
 };
-window.showPage=(name)=>{
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- const target=$(name+"Page");
- if(target)target.classList.add("active");
- document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
- if(name==="work")loadTasks();
- if(name==="history")loadHistory();
- if(name==="admin"){loadAdminTasks();loadPendingDeposits();}
- if(name==="payout")loadMyDeposits();
+
+async function getProfile(user){
+const r=doc(db,"users",user.uid),s=await getDoc(r);
+if(!s.exists()){
+await setDoc(r,{name:user.displayName||"Member",email:user.email||"",role:"user",balance:0,activePlan:"None",createdAt:serverTimestamp()});
+return getProfile(user);
+}
+profile=s.data();
+$("hello").textContent=profile.name||"Member";
+$("balance").textContent=money(profile.balance);
+$("profileName").textContent=profile.name||"Member";
+$("profileEmail").textContent=user.email||"";
+$("profileId").textContent=user.uid;
+$("profilePlan").textContent=profile.activePlan||"None";
+$("adminOpen").classList.toggle("hidden",profile.role!=="admin");
+}
+
+onAuthStateChanged(auth,async user=>{
+if(user){
+$("auth").classList.add("hidden");
+$("app").classList.remove("hidden");
+try{await getProfile(user);}catch(e){alert("Profile load error: "+e.message);}
+}else{
+$("app").classList.add("hidden");
+$("auth").classList.remove("hidden");
+}
+});
+
+async function refreshProfile(){if(auth.currentUser)await getProfile(auth.currentUser);}
+
+async function renderPlans(){
+const host=$("plansList");host.replaceChildren();
+plans.forEach(price=>{
+const d=document.createElement("div");d.className="plan";
+d.innerHTML=`<div class="row"><b>MR9PRO VIP ${plans.indexOf(price)+1}</b><span class="pill">Membership</span></div><div class="price">${money(price)}</div><p>সদস্যপদ ফি। কোনো নিশ্চিত দৈনিক আয় বা বিনিয়োগ-লাভ অন্তর্ভুক্ত নয়।</p><button class="primary" data-buy="${price}">Buy Now</button>`;
+host.appendChild(d);
+});
+host.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
+selectedPlan="VIP "+(plans.indexOf(Number(b.dataset.buy))+1);
+$("depositAmount").value=b.dataset.buy;
+showPage("deposit");
+});
+}
+
+$("copyNumber").onclick=async()=>{
+try{await navigator.clipboard.writeText("01980371630");alert("Nagad নম্বর কপি হয়েছে。");}
+catch{alert("নম্বর: 01980371630");}
 };
-function money(v){return "৳ "+Number(v||0).toFixed(2)}
-function safeText(el,value){el.textContent=value??""}
-async function loadProfile(user){
- const snap=await getDoc(doc(db,"users",user.uid));
- if(!snap.exists()){
-  await setDoc(doc(db,"users",user.uid),{name:user.displayName||"Member",email:user.email||"",role:"user",balance:0,activePlan:"Starter",createdAt:serverTimestamp()});
-  return loadProfile(user);
- }
- currentProfile=snap.data();
- const name=currentProfile.name||"Member";
- safeText($("headerName"),name);
- safeText($("avatar"),name.slice(0,2).toUpperCase());
- safeText($("userId"),"ID: "+user.uid.slice(0,12).toUpperCase());
- safeText($("balanceText"),money(currentProfile.balance));
- safeText($("profileName"),name);
- safeText($("profileEmail"),user.email);
- safeText($("profileId"),user.uid);
- safeText($("activePlan"),(currentProfile.activePlan||"Starter")+" (Free)");
- safeText($("refCode"),user.uid.slice(0,10).toUpperCase());
- if(currentProfile.role==="admin"){
-  const adminBtn=document.createElement("button");
-  adminBtn.className="primary";
-  adminBtn.textContent="Open Admin Panel";
-  adminBtn.onclick=()=>showPage("admin");
-  const card=$("accountPage").querySelector(".card");
-  if(!$("openAdminButton")){adminBtn.id="openAdminButton";card.appendChild(adminBtn)}
- }
+
+$("sendDeposit").onclick=async()=>{
+try{
+const amount=Number($("depositAmount").value),txn=$("depositTxn").value.trim().toUpperCase();
+if(!Number.isFinite(amount)||amount<10||amount>50000)throw Error("১০ থেকে ৫০,০০০ টাকার মধ্যে পরিমাণ লিখুন।");
+if(txn.length<5)throw Error("সঠিক Transaction ID লিখুন।");
+await addDoc(collection(db,"deposits"),{uid:auth.currentUser.uid,email:auth.currentUser.email,amount,txnId:txn,planName:selectedPlan||"",status:"pending",createdAt:serverTimestamp()});
+selectedPlan="";
+message("depositMsg","অনুরোধ জমা হয়েছে। Admin যাচাই না করা পর্যন্ত Wallet-এ টাকা যোগ হবে না।");
+$("depositTxn").value="";
+await loadMyDeposits();
+}catch(e){message("depositMsg","সমস্যা: "+e.message);}
+};
+
+async function loadMyDeposits(){
+const host=$("myDeposits");host.textContent="লোড হচ্ছে...";
+try{
+const q=query(collection(db,"deposits"),where("uid","==",auth.currentUser.uid));
+const s=await getDocs(q);host.replaceChildren();
+if(s.empty){host.textContent="কোনো Deposit নেই।";return;}
+s.forEach(x=>{
+const v=x.data(),d=document.createElement("div");
+d.className="item";d.textContent=`${money(v.amount)} · ${v.status} · ${v.txnId}`;
+host.appendChild(d);
+});
+}catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
 }
-function renderPlans(){
- const plans=[["Starter","ফ্রি","প্রাথমিক সদস্য সুবিধা"],["Bronze","ফ্রি","সাধারণ কাজ ও অফার দেখুন"],["Silver","ফ্রি","যোগ্যতা অনুযায়ী অতিরিক্ত সুবিধা"],["Gold","ফ্রি","Admin ঘোষিত বিশেষ সুবিধা"]];
- $("plansList").replaceChildren();
- plans.forEach(([name,price,desc])=>{
-  const box=document.createElement("div");box.className="plan";
-  const top=document.createElement("div");top.className="plan-top";
-  const h=document.createElement("h3");h.textContent="MR9PRO "+name.toUpperCase();top.appendChild(h);
-  const body=document.createElement("div");body.className="plan-body";
-  const row=document.createElement("div");row.className="row";
-  const p=document.createElement("span");p.className="price";p.textContent=price;
-  const active=document.createElement("span");active.className="status";active.textContent=currentProfile?.activePlan===name?"✓ Active":"Free Plan";
-  row.append(p,active);
-  const text=document.createElement("p");text.className="muted";text.textContent=desc;
-  const btn=document.createElement("button");btn.className="primary";btn.textContent=currentProfile?.activePlan===name?"Current Plan":"Activate Free Plan";
-  btn.disabled=currentProfile?.activePlan===name;
-  btn.onclick=()=>activatePlan(name);
-  body.append(row,text,btn);box.append(top,body);$("plansList").appendChild(box);
- });
+
+async function loadTasks(){
+const host=$("taskList");host.textContent="লোড হচ্ছে...";
+try{
+const s=await getDocs(collection(db,"tasks"));host.replaceChildren();
+if(s.empty){host.textContent="এখনো কোনো কাজ প্রকাশ করা হয়নি।";return;}
+for(const x of s.docs){
+const t=x.data(),d=document.createElement("div");d.className="item";
+d.innerHTML=`<b>${esc(t.title)}</b><p>${esc(t.description)}</p><div class="row"><b>${money(t.reward)}</b><button class="primary">কাজের প্রমাণ জমা দিন</button></div><small class="muted">Admin অনুমোদনের পর পুরস্কার যোগ হবে।</small>`;
+d.querySelector("button").onclick=async()=>{
+const proof=prompt("কাজের প্রমাণ/বিবরণ লিখুন:");
+if(!proof||!proof.trim())return;
+try{
+await addDoc(collection(db,"claims"),{uid:auth.currentUser.uid,email:auth.currentUser.email,taskId:x.id,taskTitle:t.title,proof:proof.trim(),status:"pending",createdAt:serverTimestamp()});
+alert("Claim জমা হয়েছে। Admin যাচাই করবেন।");
+}catch(e){alert("সমস্যা: "+e.message);}
+};
+host.appendChild(d);
 }
-async function activatePlan(name){
- try{
-  if(!auth.currentUser)return;
-  await updateDoc(doc(db,"users",auth.currentUser.uid),{activePlan:name,planUpdatedAt:serverTimestamp()});
-  currentProfile.activePlan=name;renderPlans();await loadProfile(auth.currentUser);
-  
+}catch(e){host.textContent="কাজ লোড করা যায়নি: "+e.message;}
+}
+
+$("publishTask").onclick=async()=>{
+try{
+if(profile?.role!=="admin")throw Error("শুধু Admin কাজ প্রকাশ করতে পারবেন।");
+const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
+if(!title||!description||!Number.isFinite(reward)||reward<0||reward>5000)throw Error("সঠিক নাম, বিবরণ ও ০–৫০০০ টাকার পুরস্কার দিন।");
+await addDoc(collection(db,"tasks"),{title,description,reward,active:true,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
+message("taskAdminMsg","কাজ প্রকাশ হয়েছে।");
+$("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
+await loadTasks();
+}catch(e){message("taskAdminMsg","সমস্যা: "+e.message);}
+};
+
+async function adminOnly(){if(profile?.role!=="admin")throw Error("Admin অনুমতি নেই।");}
+
+async function approveDeposit(id,approve){
+await adminOnly();
+const ref=doc(db,"deposits",id);
+await runTransaction(db,async tx=>{
+const s=await tx.get(ref);
+if(!s.exists()||s.data().status!=="pending")throw Error("এই অনুরোধটি আর Pending নেই।");
+const v=s.data();
+tx.update(ref,{status:approve?"approved":"rejected",reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid});
+if(approve){
+const u=doc(db,"users",v.uid),us=await tx.get(u);
+if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।");
+const changes={balance:Number(us.data().balance||0)+Number(v.amount)};
+if(v.planName)changes.activePlan=v.planName;
+tx.update(u,changes);
+}
+});
+}
+
+async function approveClaim(id,approve){
+await adminOnly();
+const ref=doc(db,"claims",id);
+await runTransaction(db,async tx=>{
+const s=await tx.get(ref);
+if(!s.exists()||s.data().status!=="pending")throw Error("এই Claim আর Pending নেই।");
+const v=s.data();let reward=0;
+if(approve){
+const taskRef=doc(db,"tasks",v.taskId),taskSnap=await tx.get(taskRef);
+if(!taskSnap.exists())throw Error("কাজটি পাওয়া যায়নি।");
+reward=Number(taskSnap.data().reward||0);
+}
+tx.update(ref,{status:approve?"approved":"rejected",reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid,rewardApproved:reward});
+if(approve){
+const u=doc(db,"users",v.uid),us=await tx.get(u);
+if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।");
+tx.update(u,{balance:Number(us.data().balance||0)+reward});
+}
+});
+}
+
+async function loadAdmin(){
+try{await adminOnly();}catch(e){$("adminDeposits").textContent=e.message;return;}
+const specs=[["deposits","adminDeposits","amount","approveDeposit"],["claims","adminClaims","rewardApproved","approveClaim"],["withdrawals","adminWithdrawals","amount","reviewWithdraw"]];
+for(const [coll,hostId,field,fn] of specs){
+const host=$(hostId);host.textContent="লোড হচ্ছে...";
+try{
+const s=await getDocs(query(collection(db,coll),where("status","==","pending")));
+host.replaceChildren();
+if(s.empty){host.textContent="কোনো Pending অনুরোধ নেই।";continue;}
+s.forEach(x=>{
+const v=x.data(),d=document.createElement("div");d.className="item";
+let detail=coll==="deposits"?`Txn: ${v.txnId}`:coll==="claims"?`প্রমাণ: ${v.proof}`:`নম্বর: ${v.number}`;
+let showAmount=coll==="claims"?(v.taskId?"কাজের পুরস্কার Admin যাচাই করবেন":""):money(v[field]);
+d.innerHTML=`<b>${esc(v.email||v.uid)}</b><p>${esc(showAmount)} · ${esc(detail)}</p><button class="primary">Approve</button><button class="danger">Reject</button>`;
+d.querySelector(".primary").onclick=async()=>{
+try{
+if(fn==="reviewWithdraw")await reviewWithdraw(x.id,true);
+else if(fn==="approveDeposit")await approveDeposit(x.id,true);
+else await approveClaim(x.id,true);
+await loadAdmin();await refreshProfile();
+}catch(e){alert(e.message);}
+};
+d.querySelector(".danger").onclick=async()=>{
+try{
+if(fn==="reviewWithdraw")await reviewWithdraw(x.id,false);
+else if(fn==="approveDeposit")await approveDeposit(x.id,false);
+else await approveClaim(x.id,false);
+await loadAdmin();
+}catch(e){alert(e.message);}
+};
+host.appendChild(d);
+});
+}catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
+}
+}
+
+async function reviewWithdraw(id,approve){
+await adminOnly();
+const ref=doc(db,"withdrawals",id);
+await runTransaction(db,async tx=>{
+const s=await tx.get(ref);
+if(!s.exists()||s.data().status!=="pending")throw Error("অনুরোধটি Pending নেই।");
+const v=s.data(),u=doc(db,"users",v.uid),us=await tx.get(u);
+if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।");
+if(approve){
+const bal=Number(us.data().balance||0);
+if(bal<v.amount)throw Error("সদস্যের পর্যাপ্ত ব্যালেন্স নেই।");
+tx.update(u,{balance:bal-Number(v.amount)});
+}
+tx.update(ref,{status:approve?"approved":"rejected",reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid});
+});
+}
+
+$("sendWithdraw").onclick=async()=>{
+try{
+const amount=Number($("withdrawAmount").value),number=$("withdrawNumber").value.trim();
+if(!Number.isFinite(amount)||amount<=0||amount>Number(profile?.balance||0))throw Error("Wallet ব্যালেন্সের মধ্যে সঠিক পরিমাণ দিন।");
+if(number.length<8)throw Error("পেমেন্ট নম্বর লিখুন।");
+await addDoc(collection(db,"withdrawals"),{uid:auth.currentUser.uid,email:auth.currentUser.email,amount,number,status:"pending",createdAt:serverTimestamp()});
+message("withdrawMsg","Withdraw request জমা হয়েছে।");
+$("withdrawAmount").value="";$("withdrawNumber").value="";
+}catch(e){message("withdrawMsg","সমস্যা: "+e.message);}
+};
+
+async function loadHistory(){
+const host=$("historyList");host.textContent="লোড হচ্ছে...";
+try{
+const names=["deposits","claims","withdrawals"],all=[];
+for(const c of names){
+const s=await getDocs(query(collection(db,c),where("uid","==",auth.currentUser.uid)));
+s.forEach(x=>{
+const v=x.data();
+all.push({type:c,status:v.status,amount:v.amount??v.rewardApproved??0,txn:v.txnId||v.taskTitle||v.number||""});
+});
+}
+host.replaceChildren();
+if(!all.length){host.textContent="এখনো কোনো History নেই।";return;}
+all.reverse().forEach(v=>{
+const d=document.createElement("div");d.className="item";
+d.textContent=`${v.type} · ${money(v.amount)} · ${v.status} · ${v.txn}`;
+host.appendChild(d);
+});
+}catch(e){host.textContent="History লোড করা যায়নি: "+e.message;}
+}
+
+$("sendSupport").onclick=async()=>{
+try{
+const text=$("supportText").value.trim();
+if(!text)throw Error("সমস্যা লিখুন।");
+await addDoc(collection(db,"support"),{uid:auth.currentUser.uid,email:auth.currentUser.email,message:text,status:"open",createdAt:serverTimestamp()});
+message("supportMsg","আপনার বার্তা জমা হয়েছে।");
+$("supportText").value="";
+}catch(e){message("supportMsg","সমস্যা: "+e.message);}
+};
+
+$("adminOpen").onclick=()=>showPage("admin");
+$("logout").onclick=$("logout2").onclick=()=>signOut(auth);
+</script>
+</body>
+</html>
