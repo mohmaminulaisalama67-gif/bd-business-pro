@@ -456,6 +456,5 @@ if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।"
 if(approve){
 const bal=Number(us.data().balance||0);
 if(bal<v.amount)throw Error("সদস্যের পর্যাপ্ত ব্যালেন্স নেই।");
-tx.update(u,{balance:bal-Number(v.amount)});
-}
-                                                                    
+tx.update(u,{balance:bal-Number(v.amount)});                                             
+  
