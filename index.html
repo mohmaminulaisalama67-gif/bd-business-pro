@@ -387,23 +387,46 @@ await loadTasks();
 
 async function adminOnly(){if(profile?.role!=="admin")throw Error("Admin অনুমতি নেই।");}
 
+
 async function approveDeposit(id,approve){
-await adminOnly();
-const ref=doc(db,"deposits",id);
-await runTransaction(db,async tx=>{
-const s=await tx.get(ref);
-if(!s.exists()||s.data().status!=="pending")throw Error("এই অনুরোধটি আর Pending নেই।");
-const v=s.data();
-tx.update(ref,{status:approve?"approved":"rejected",reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid});
-if(approve){
-const u=doc(db,"users",v.uid),us=await tx.get(u);
-if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।");
-const changes={balance:Number(us.data().balance||0)+Number(v.amount)};
-if(v.planName)changes.activePlan=v.planName;
-tx.update(u,changes);
-}
-});
-}
+  await adminOnly();
+  const ref=doc(db,"deposits",id);
+
+  await runTransaction(db,async tx=>{
+    const s=await tx.get(ref);
+
+    if(!s.exists()||s.data().status!=="pending")
+      throw Error("এই অনুরোধটি আর Pending নেই");
+
+    const v=s.data();
+    let u=null,us=null;
+
+    if(approve){
+      u=doc(db,"users",v.uid);
+      us=await tx.get(u);
+
+      if(!us.exists())
+        throw Error("সদস্য পাওয়া যায়নি");
+    }
+
+    if(approve){
+      const changes={
+        balance:Number(us.data().balance||0)+Number(v.amount)
+      };
+
+      if(v.planName) changes.activePlan=v.planName;
+
+      tx.update(u,changes);
+    }
+
+    tx.update(ref,{
+      status:approve?"approved":"rejected",
+      reviewedAt:serverTimestamp(),
+      reviewedBy:auth.currentUser.uid
+    });
+  });
+  }
+  
 
 async function approveClaim(id,approve){
 await adminOnly();
