@@ -349,41 +349,34 @@ const v=x.data(),d=document.createElement("div");
 d.className="item";d.textContent=`${money(v.amount)} · ${v.status} · ${v.txnId}`;
 host.appendChild(d);
 });
-}catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
-}
-
-async function loadTasks(){
-const host=$("taskList");host.textContent="লোড হচ্ছে...";
-try{
-const s=await getDocs(collection(db,"tasks"));host.replaceChildren();
-if(s.empty){host.textContent="এখনো কোনো কাজ প্রকাশ করা হয়নি।";return;}
-for(const x of s.docs){
-const t=x.data(),d=document.createElement("div");d.className="item";
-d.innerHTML=`<b>${esc(t.title)}</b><p>${esc(t.description)}</p><div class="row"><b>${money(t.reward)}</b><button class="primary">কাজের প্রমাণ জমা দিন</button></div><small class="muted">Admin অনুমোদনের পর পুরস্কার যোগ হবে।</small>`;
-d.querySelector("button").onclick=async()=>{
-const proof=prompt("কাজের প্রমাণ/বিবরণ লিখুন:");
-if(!proof||!proof.trim())return;
-try{
-await addDoc(collection(db,"claims"),{uid:auth.currentUser.uid,email:auth.currentUser.email,taskId:x.id,taskTitle:t.title,proof:proof.trim(),status:"pending",createdAt:serverTimestamp()});
-alert("Claim জমা হয়েছে। Admin যাচাই করবেন।");
-}catch(e){alert("সমস্যা: "+e.message);}
-};
-host.appendChild(d);
-}
-}catch(e){host.textContent="কাজ লোড করা যায়নি: "+e.message;}
-}
-
-$("publishTask").onclick=async()=>{
-try{
-if(profile?.role!=="admin")throw Error("শুধু Admin কাজ প্রকাশ করতে পারবেন।");
-const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
-if(!title||!description||!Number.isFinite(reward)||reward<0||reward>5000)throw Error("সঠিক নাম, বিবরণ ও ০–৫০০০ টাকার পুরস্কার দিন।");
-await addDoc(collection(db,"tasks"),{title,description,reward,active:true,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-message("taskAdminMsg","কাজ প্রকাশ হয়েছে।");
-$("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
-await loadTasks();
-}catch(e){message("taskAdminMsg","সমস্যা: "+e.message);}
-};
+async function loadAdmin(){
+  try{await adminOnly();}catch(e){$("adminDeposits").textContent=e.message;return;}
+  const specs=[["deposits","adminDeposits","amount","approveDeposit"],["claims","adminClaims","rewardApproved","approveClaim"],["withdrawals","adminWithdrawals","amount","reviewWithdraw"]];
+  for(const [coll,hostId,field,fn] of specs){
+    const host=$(hostId);host.textContent="লোড হচ্ছে...";
+    try{
+      const s=await getDocs(query(collection(db,coll),where("status","==","pending")));
+      host.replaceChildren();
+      if(s.empty){host.textContent="কোনো Pending অনুরোধ নেই";continue;}
+      s.forEach(x=>{
+        const v=x.data(),d=document.createElement("div");d.className="item";
+        let detail=coll==="deposits"?`Txn: ${v.txnId}`:coll==="claims"?`প্রমাণ: ${v.proof}`:`নম্বর: ${v.number}`;
+        
+        d.innerHTML = `
+          <div><b>${v.email || v.uid}</b> - ${v[field] || 0} টাকা</div>
+          <div>${detail}</div>
+          <div style="margin-top:5px;">
+            <button onclick="${fn}('${x.id}', true)">Approve</button>
+            <button onclick="${fn}('${x.id}', false)">Reject</button>
+          </div>
+        `;
+        
+        host.appendChild(d);
+      });
+    }catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
+  }
+  }
+  
 
 async function adminOnly(){if(profile?.role!=="admin")throw Error("Admin অনুমতি নেই।");}
 
