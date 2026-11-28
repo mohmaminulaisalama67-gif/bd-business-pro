@@ -461,23 +461,25 @@ if(s.empty){host.textContent="কোনো Pending অনুরোধ নেই�
 s.forEach(x=>{
 const v=x.data(),d=document.createElement("div");d.className="item";
 let detail=coll==="deposits"?`Txn: ${v.txnId}`:coll==="claims"?`প্রমাণ: ${v.proof}`:`নম্বর: ${v.number}`;
-let showAmount=coll==="claims"?(v.taskId?"কাজের পুরস্কার Admin যাচাই করবেন":""):money(v[field]);
-d.innerHTML=`<b>${esc(v.email||v.uid)}</b><p>${esc(showAmount)} · ${esc(detail)}</p><button class="primary">Approve</button><button class="danger">Reject</button>`;
-d.querySelector(".primary").onclick=async()=>{
-try{
-if(fn==="reviewWithdraw")await reviewWithdraw(x.id,true);
-else if(fn==="approveDeposit")await approveDeposit(x.id,true);
-else await approveClaim(x.id,true);
-await loadAdmin();await refreshProfile();
-}catch(e){alert(e.message);}
-};
-d.querySelector(".danger").onclick=async()=>{
-try{
-if(fn==="reviewWithdraw")await reviewWithdraw(x.id,false);
-else if(fn==="approveDeposit")await approveDeposit(x.id,false);
-else await approveClaim(x.id,false);
-await loadAdmin();
-}catch(e){alert(e.message);}
+
+async function reviewWithdraw(id,approve){
+  await adminOnly();
+  const ref=doc(db,"withdrawals",id);
+
+  await runTransaction(db,async tx=>{
+    const s=await tx.get(ref);
+
+    if(!s.exists()||s.data().status!=="pending")
+      throw Error("অনুরোধটি Pending নেই");
+
+    tx.update(ref,{
+      status:approve?"approved":"rejected",
+      reviewedAt:serverTimestamp(),
+      reviewedBy:auth.currentUser.uid
+    });
+  });
+}
+  
 };
 host.appendChild(d);
 });
