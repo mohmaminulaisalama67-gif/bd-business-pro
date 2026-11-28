@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -216,15 +215,14 @@ footer{text-align:center;color:#9aa5b4;font-size:12px;padding:20px}
 </div>
 
 <footer>© 2026 MR9PRO | Digital Platform</footer>
-
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc,collection,addDoc,getDocs,query,where,serverTimestamp,runTransaction} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+                                                                  <script type="module">
+import {initializeApp} from "https://gstatic.com";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://gstatic.com";
+import {getFirestore,doc,setDoc,getDoc,collection,addDoc,getDocs,query,where,serverTimestamp,runTransaction} from "https://gstatic.com";
 
 const firebaseConfig={
 apiKey:"AIzaSyD_USMInWCKzDEIUk9SSfmEfZWjPqP3KFg",
-authDomain:"mr9pro-c1631.firebaseapp.com",
+authDomain:"://firebaseapp.com",
 projectId:"mr9pro-c1631",
 storageBucket:"mr9pro-c1631.firebasestorage.app",
 messagingSenderId:"519203001702",
@@ -239,7 +237,7 @@ const $=id=>document.getElementById(id);
 let mode="login",profile=null,selectedPlan="";
 const plans=[500,1000,2000,3000,4000,5000];
 const money=n=>"৳ "+Number(n||0).toFixed(2);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"'"}[c]));
 function message(id,t){$(id).textContent=t}
 
 function showPage(name){
@@ -349,77 +347,80 @@ const v=x.data(),d=document.createElement("div");
 d.className="item";d.textContent=`${money(v.amount)} · ${v.status} · ${v.txnId}`;
 host.appendChild(d);
 });
-async function loadAdmin(){
-  try{await adminOnly();}catch(e){$("adminDeposits").textContent=e.message;return;}
-  const specs=[["deposits","adminDeposits","amount","approveDeposit"],["claims","adminClaims","rewardApproved","approveClaim"],["withdrawals","adminWithdrawals","amount","reviewWithdraw"]];
-  for(const [coll,hostId,field,fn] of specs){
-    const host=$(hostId);host.textContent="লোড হচ্ছে...";
-    try{
-      const s=await getDocs(query(collection(db,coll),where("status","==","pending")));
-      host.replaceChildren();
-      if(s.empty){host.textContent="কোনো Pending অনুরোধ নেই";continue;}
-      s.forEach(x=>{
-        const v=x.data(),d=document.createElement("div");d.className="item";
-        let detail=coll==="deposits"?`Txn: ${v.txnId}`:coll==="claims"?`প্রমাণ: ${v.proof}`:`নম্বর: ${v.number}`;
-        
-        d.innerHTML = `
-          <div><b>${v.email || v.uid}</b> - ${v[field] || 0} টাকা</div>
-          <div>${detail}</div>
-          <div style="margin-top:5px;">
-            <button onclick="${fn}('${x.id}', true)">Approve</button>
-            <button onclick="${fn}('${x.id}', false)">Reject</button>
-          </div>
-        `;
-        
-        host.appendChild(d);
-      });
-    }catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
-  }
-  }
-  
+}catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
+}
 
-async function adminOnly(){if(profile?.role!=="admin")throw Error("Admin অনুমতি নেই।");}
+async function loadTasks(){
+const host=$("taskList");host.textContent="লোড হচ্ছে...";
+try{
+const s=await getDocs(collection(db,"tasks"));
+host.replaceChildren();
+if(s.empty){host.innerHTML='<div class="card muted">বর্তমানে কোনো কাজ নেই।</div>';return;}
+s.forEach(x=>{
+const v=x.data(),d=document.createElement("div");d.className="card";
+d.innerHTML=`<div class="row"><h3>${esc(v.title)}</h3><span class="pill">${money(v.reward)}</span></div><p class="muted">${esc(v.description||"")}</p><input placeholder="কাজের প্রমাণ / লিংক / বিবরণ লিখুন"><button class="primary full">Submit Claim</button><div class="msg"></div>`;
+const inp=d.querySelector("input"),btn=d.querySelector("button"),msg=d.querySelector(".msg");
+btn.onclick=async()=>{
+try{
+const proof=inp.value.trim();
+if(!proof)throw Error("প্রমাণ লিখুন।");
+btn.disabled=true;
+await addDoc(collection(db,"claims"),{uid:auth.currentUser.uid,email:auth.currentUser.email,taskId:x.id,taskTitle:v.title,rewardApproved:Number(v.reward||0),proof,status:"pending",createdAt:serverTimestamp()});
+inp.value="";
+msg.textContent="প্রমাণ জমা হয়েছে। Admin অনুমোদন করলে পুরস্কার যোগ হবে।";
+}catch(e){msg.textContent="সমস্যা: "+e.message;}
+finally{btn.disabled=false;}
+};
+host.appendChild(d);
+});
+}catch(e){host.textContent="কাজ লোড করা যায়নি: "+e.message;}
+}
 
+$("publishTask").onclick=async()=>{
+try{
+await adminOnly();
+const title=$("taskTitle").value.trim(),description=$("taskDescription").value.trim(),reward=Number($("taskReward").value);
+if(!title)throw Error("কাজের নাম লিখুন।");
+if(!Number.isFinite(reward)||reward<0||reward>5000)throw Error("০ থেকে ৫,০০০ টাকার মধ্যে পুরস্কার দিন।");
+await addDoc(collection(db,"tasks"),{title,description,reward,createdAt:serverTimestamp()});
+$("taskTitle").value="";$("taskDescription").value="";$("taskReward").value="";
+message("taskAdminMsg","নতুন কাজ প্রকাশ হয়েছে।");
+}catch(e){message("taskAdminMsg","সমস্যা: "+e.message);}
+};
+
+async function adminOnly(){
+if(profile?.role!=="admin")throw Error("Admin অনুমতি নেই।");
+}
 
 async function approveDeposit(id,approve){
-  await adminOnly();
-  const ref=doc(db,"deposits",id);
-
-  await runTransaction(db,async tx=>{
-    const s=await tx.get(ref);
-
-    if(!s.exists()||s.data().status!=="pending")
-      throw Error("এই অনুরোধটি আর Pending নেই");
-
-    const v=s.data();
-    let u=null,us=null;
-
-    if(approve){
-      u=doc(db,"users",v.uid);
-      us=await tx.get(u);
-
-      if(!us.exists())
-        throw Error("সদস্য পাওয়া যায়নি");
-    }
-
-    if(approve){
-      const changes={
-        balance:Number(us.data().balance||0)+Number(v.amount)
-      };
-
-      if(v.planName) changes.activePlan=v.planName;
-
-      tx.update(u,changes);
-    }
-
-    tx.update(ref,{
-      status:approve?"approved":"rejected",
-      reviewedAt:serverTimestamp(),
-      reviewedBy:auth.currentUser.uid
-    });
-  });
-  }
-  
+await adminOnly();
+const ref=doc(db,"deposits",id);
+await runTransaction(db,async tx=>{
+const s=await tx.get(ref);
+if(!s.exists()||s.data().status!=="pending")throw Error("এই অনুরোধটি আর Pending নেই।");
+const v=s.data();
+let u=null,us=null;
+if(approve){
+u=doc(db,"users",v.uid);
+us=await tx.get(u);
+if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।");
+}
+if(approve){
+const changes={
+balance:Number(us.data().balance||0)+Number(v.amount)
+};
+if(v.planName)changes.activePlan=v.planName;
+tx.update(u,changes);
+}
+tx.update(ref,{
+status:approve?"approved":"rejected",
+reviewedAt:serverTimestamp(),
+reviewedBy:auth.currentUser.uid
+});
+});
+await refreshProfile();
+await loadAdmin();
+}
 
 async function approveClaim(id,approve){
 await adminOnly();
@@ -440,42 +441,8 @@ if(!us.exists())throw Error("সদস্য পাওয়া যায়নি।"
 tx.update(u,{balance:Number(us.data().balance||0)+reward});
 }
 });
-}
-
-async function loadAdmin(){
-try{await adminOnly();}catch(e){$("adminDeposits").textContent=e.message;return;}
-const specs=[["deposits","adminDeposits","amount","approveDeposit"],["claims","adminClaims","rewardApproved","approveClaim"],["withdrawals","adminWithdrawals","amount","reviewWithdraw"]];
-for(const [coll,hostId,field,fn] of specs){
-const host=$(hostId);host.textContent="লোড হচ্ছে...";
-try{
-const s=await getDocs(query(collection(db,coll),where("status","==","pending")));
-host.replaceChildren();
-if(s.empty){host.textContent="কোনো Pending অনুরোধ নেই।";continue;}
-s.forEach(x=>{
-const v=x.data(),d=document.createElement("div");d.className="item";
-let detail=coll==="deposits"?`Txn: ${v.txnId}`:coll==="claims"?`প্রমাণ: ${v.proof}`:`নম্বর: ${v.number}`;
- async function reviewWithdraw(id,approve){
-  await adminOnly();
-  const ref=doc(db,"withdrawals",id);
-
-  await runTransaction(db,async tx=>{
-    const s=await tx.get(ref);
-
-    if(!s.exists()||s.data().status!=="pending")
-      throw Error("অনুরোধটি Pending নেই");
-
-    tx.update(ref,{
-      status:approve?"approved":"rejected",
-      reviewedAt:serverTimestamp(),
-      reviewedBy:auth.currentUser.uid
-    });
-  });
-}
-};
-host.appendChild(d);
-});
-}catch(e){host.textContent="লোড করা যায়নি: "+e.message;}
-}
+await refreshProfile();
+await loadAdmin();
 }
 
 async function reviewWithdraw(id,approve){
@@ -491,54 +458,4 @@ const bal=Number(us.data().balance||0);
 if(bal<v.amount)throw Error("সদস্যের পর্যাপ্ত ব্যালেন্স নেই।");
 tx.update(u,{balance:bal-Number(v.amount)});
 }
-tx.update(ref,{status:approve?"approved":"rejected",reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid});
-});
-}
-
-$("sendWithdraw").onclick=async()=>{
-try{
-const amount=Number($("withdrawAmount").value),number=$("withdrawNumber").value.trim();
-if(!Number.isFinite(amount)||amount<=0||amount>Number(profile?.balance||0))throw Error("Wallet ব্যালেন্সের মধ্যে সঠিক পরিমাণ দিন।");
-if(number.length<8)throw Error("পেমেন্ট নম্বর লিখুন।");
-await addDoc(collection(db,"withdrawals"),{uid:auth.currentUser.uid,email:auth.currentUser.email,amount,number,status:"pending",createdAt:serverTimestamp()});
-message("withdrawMsg","Withdraw request জমা হয়েছে।");
-$("withdrawAmount").value="";$("withdrawNumber").value="";
-}catch(e){message("withdrawMsg","সমস্যা: "+e.message);}
-};
-
-async function loadHistory(){
-const host=$("historyList");host.textContent="লোড হচ্ছে...";
-try{
-const names=["deposits","claims","withdrawals"],all=[];
-for(const c of names){
-const s=await getDocs(query(collection(db,c),where("uid","==",auth.currentUser.uid)));
-s.forEach(x=>{
-const v=x.data();
-all.push({type:c,status:v.status,amount:v.amount??v.rewardApproved??0,txn:v.txnId||v.taskTitle||v.number||""});
-});
-}
-host.replaceChildren();
-if(!all.length){host.textContent="এখনো কোনো History নেই।";return;}
-all.reverse().forEach(v=>{
-const d=document.createElement("div");d.className="item";
-d.textContent=`${v.type} · ${money(v.amount)} · ${v.status} · ${v.txn}`;
-host.appendChild(d);
-});
-}catch(e){host.textContent="History লোড করা যায়নি: "+e.message;}
-}
-
-$("sendSupport").onclick=async()=>{
-try{
-const text=$("supportText").value.trim();
-if(!text)throw Error("সমস্যা লিখুন।");
-await addDoc(collection(db,"support"),{uid:auth.currentUser.uid,email:auth.currentUser.email,message:text,status:"open",createdAt:serverTimestamp()});
-message("supportMsg","আপনার বার্তা জমা হয়েছে।");
-$("supportText").value="";
-}catch(e){message("supportMsg","সমস্যা: "+e.message);}
-};
-
-$("adminOpen").onclick=()=>showPage("admin");
-$("logout").onclick=$("logout2").onclick=()=>signOut(auth);
-</script>
-</body>
-</html>
+                                                                    
