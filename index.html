@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -58,6 +57,42 @@ button.danger{border:0;background:#a82a32;color:white;padding:11px 14px;border-r
 #auth .card{padding:23px}
 footer{text-align:center;color:#9aa5b4;font-size:12px;padding:20px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
+
+/* VIP plans inspired by the supplied reference */
+#plans h2{text-align:center;font-size:25px;margin:10px 0 8px}
+.vip-note{font-size:12px;color:#758194;text-align:center;line-height:1.5;margin:0 4px 16px}
+.vip-card{overflow:hidden;background:#fff;border-radius:25px;margin:18px 0 22px;box-shadow:0 10px 28px #17203312}
+.vip-banner{min-height:150px;padding:25px 20px;display:flex;align-items:center;justify-content:space-between;color:white;background:linear-gradient(115deg,#252b35,#68717c 58%,#9a7770);position:relative}
+.vip-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#10172255,transparent);pointer-events:none}
+.vip-banner>*{position:relative;z-index:1}
+.vip-banner h3{font-family:Georgia,serif;font-size:27px;letter-spacing:1px;margin:0 0 7px;text-shadow:0 2px 5px #0008}
+.vip-banner p{margin:4px 0;font-size:13px;font-weight:700;color:#fff}
+.vip-emblem{font-size:65px;opacity:.85;text-shadow:0 5px 15px #0008}
+.vip-card-body{padding:0 18px 19px}
+.vip-card-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:-2px}
+.vip-card-title h3{font-size:24px;margin:0;font-weight:900}
+.vip-price{background:#df3438;color:#fff;border-radius:16px;padding:10px 15px;font-size:21px;font-weight:900;white-space:nowrap;box-shadow:0 7px 16px #df343833}
+.vip-actions{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;margin-top:18px}
+.vip-actions button{min-height:58px;border-radius:17px;font-size:16px;font-weight:900}
+.vip-detail-btn{border:1px solid #e0e3e8;background:#f5f6f8;color:#202b3b}
+.vip-buy-btn{border:0;background:#e73538;color:#fff;box-shadow:0 8px 18px #df343833}
+.vip-modal-backdrop{position:fixed;inset:0;background:#10182799;backdrop-filter:blur(5px);z-index:20;display:none;align-items:flex-end}
+.vip-modal-backdrop.open{display:flex}
+.vip-modal{width:100%;max-width:720px;margin:auto auto 0;background:#fff;border-radius:30px 30px 0 0;padding:24px 20px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;box-shadow:0 -10px 40px #0002}
+.vip-modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.vip-modal-head h3{font-size:23px;margin:0;font-weight:900}
+.vip-modal-close{width:42px;height:42px;border:0;border-radius:50%;background:#f0f3f7;color:#657184;font-size:25px}
+.vip-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.vip-detail-box{background:#f8f9fb;border:1px solid #e5e8ed;border-radius:20px;padding:17px 14px;min-height:112px}
+.vip-detail-icon{font-size:23px;color:#df3438;display:block;margin-bottom:9px}
+.vip-detail-label{display:block;color:#758194;font-size:13px;font-weight:800;margin-bottom:5px}
+.vip-detail-value{font-size:20px;font-weight:900}
+.vip-estimate{margin:18px 0;background:#e8f8f2;border:1px dashed #19a77b;border-radius:18px;padding:17px;color:#087d5c;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800}
+.vip-estimate strong{font-size:24px}
+.vip-modal .vip-buy-btn{width:100%;min-height:60px;border-radius:17px;font-size:18px}
+.vip-disclaimer{font-size:12px;line-height:1.5;color:#758194;margin:13px 2px 0}
+@media(max-width:360px){.vip-banner h3{font-size:22px}.vip-emblem{font-size:48px}.vip-card-title h3{font-size:20px}.vip-actions{grid-template-columns:1fr 1fr}.vip-actions button{font-size:14px}}
+
 </style>
 </head>
 <body>
@@ -215,6 +250,25 @@ footer{text-align:center;color:#9aa5b4;font-size:12px;padding:20px}
 </nav>
 </div>
 
+
+<div id="vipModalBackdrop" class="vip-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="vipModalTitle">
+  <div class="vip-modal">
+    <div class="vip-modal-head">
+      <h3 id="vipModalTitle">VIP Plan Details</h3>
+      <button type="button" class="vip-modal-close" id="vipModalClose" aria-label="Close">×</button>
+    </div>
+    <div class="vip-detail-grid">
+      <div class="vip-detail-box"><span class="vip-detail-icon">▣</span><span class="vip-detail-label">VALIDITY</span><strong class="vip-detail-value" id="vipValidity">৩০ দিন</strong></div>
+      <div class="vip-detail-box"><span class="vip-detail-icon">☷</span><span class="vip-detail-label">DAILY TASKS</span><strong class="vip-detail-value" id="vipTasks">প্রকাশিত কাজ</strong></div>
+      <div class="vip-detail-box"><span class="vip-detail-icon">◉</span><span class="vip-detail-label">PER TASK RATE</span><strong class="vip-detail-value" id="vipRate">Admin নির্ধারিত</strong></div>
+      <div class="vip-detail-box"><span class="vip-detail-icon">🎁</span><span class="vip-detail-label">INSTANT CASHBACK</span><strong class="vip-detail-value">৳ ০</strong></div>
+    </div>
+    <div class="vip-estimate"><span>সম্ভাব্য আয়</span><strong id="vipEstimate">নির্ধারিত নয়</strong></div>
+    <button type="button" class="vip-buy-btn" id="vipModalBuy">🛒 PURCHASE PLAN NOW</button>
+    <p class="vip-disclaimer">কাজের সংখ্যা, পুরস্কার ও মোট আয় Admin প্রকাশিত কাজ এবং যাচাইয়ের উপর নির্ভরশীল। কোনো নির্দিষ্ট আয় বা লাভের নিশ্চয়তা নেই।</p>
+  </div>
+</div>
+
 <footer>© 2026 MR9PRO | Digital Platform</footer>
 
 <script type="module">
@@ -293,7 +347,7 @@ $("profilePlan").textContent=profile.activePlan||"None";
 $("adminOpen").classList.toggle("hidden",profile.role!=="admin");
 }
 
-onAuthStateChanged(auth,async user=>{
+  onAuthStateChanged(auth,async user=>{
 if(user){
 $("auth").classList.add("hidden");
 $("app").classList.remove("hidden");
@@ -308,17 +362,112 @@ async function refreshProfile(){if(auth.currentUser)await getProfile(auth.curren
 
 async function renderPlans(){
 const host=$("plansList");host.replaceChildren();
-plans.forEach(price=>{
-const d=document.createElement("div");d.className="plan";
-d.innerHTML=`<div class="row"><b>MR9PRO VIP ${plans.indexOf(price)+1}</b><span class="pill">Membership</span></div><div class="price">${money(price)}</div><p>সদস্যপদ ফি। কোনো নিশ্চিত দৈনিক আয় বা বিনিয়োগ-লাভ অন্তর্ভুক্ত নয়।</p><button class="primary" data-buy="${price}">Buy Now</button>`;
+plans.forEach((price,index)=>{
+const planName="VIP "+(index+1);
+const d=document.createElement("article");d.className="vip-card";
+const theme=[
+"linear-gradient(115deg,#292b34,#77716f 60%,#ad8b7b)",
+"linear-gradient(115deg,#18232a,#65717a 58%,#aeb8bf)",
+"linear-gradient(115deg,#171717,#64502a 60%,#d0a94e)",
+"linear-gradient(115deg,#202034,#625c85 60%,#b7a7d8)",
+"linear-gradient(115deg,#25232b,#76545c 60%,#c99b9f)",
+"linear-gradient(115deg,#162c2b,#3d8373 60%,#b0d0b9)"
+][index%6];
+d.innerHTML=`
+<div class="vip-banner" style="background:${theme}">
+  <div><h3>MR9PRO ${esc(planName)}</h3><p>MEMBERSHIP PLAN</p><p>PRICE: ${money(price)}</p></div>
+  <div class="vip-emblem" aria-hidden="true">♛</div>
+</div>
+<div class="vip-card-body">
+  <div class="vip-card-title"><h3>MR9PRO ${esc(planName)}</h3><span class="vip-price">${money(price)}</span></div>
+  <div class="vip-actions">
+    <button type="button" class="vip-detail-btn" data-detail="${price}">☷ বিস্তারিত</button>
+    <button type="button" class="vip-buy-btn" data-buy="${price}">ϟ BUY NOW</button>
+  </div>
+</div>`;
 host.appendChild(d);
 });
-host.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
-selectedPlan="VIP "+(plans.indexOf(Number(b.dataset.buy))+1);
-$("depositAmount").value=b.dataset.buy;
-showPage("deposit");
-});
+host.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>openVipDetails(Number(b.dataset.detail)));
+host.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>purchasePlan(Number(b.dataset.buy)));
 }
+
+function openVipDetails(price){
+const index=plans.indexOf(price),name="VIP "+(index+1);
+$("vipModalTitle").textContent="MR9PRO "+name+" Details";
+$("vipValidity").textContent="৩০ দিন";
+$("vipTasks").textContent="প্রকাশিত কাজ";
+$("vipRate").textContent="Admin নির্ধারিত";
+$("vipEstimate").textContent="নির্ধারিত নয়";
+$("vipModalBuy").dataset.price=String(price);
+$("vipModalBackdrop").classList.add("open");
+document.body.style.overflow="hidden";
+}
+function closeVipDetails(){
+$("vipModalBackdrop").classList.remove("open");
+document.body.style.overflow="";
+}
+async function purchasePlan(price){
+const index=plans.indexOf(price);
+if(index<0){alert("সঠিক VIP Plan নির্বাচন করুন।");return;}
+if(!auth.currentUser){alert("VIP কিনতে আগে Login করুন।");return;}
+
+const planName="VIP "+(index+1);
+closeVipDetails();
+
+try{
+  // Always read the latest server-side wallet balance before charging.
+  const userRef=doc(db,"users",auth.currentUser.uid);
+  const purchaseRef=doc(collection(db,"purchases"));
+
+  await runTransaction(db,async tx=>{
+    const userSnap=await tx.get(userRef);
+    if(!userSnap.exists())throw Error("আপনার অ্যাকাউন্ট পাওয়া যায়নি।");
+
+    const currentBalance=Number(userSnap.data().balance||0);
+    if(!Number.isFinite(currentBalance)||currentBalance<price){
+      const shortfall=Math.max(0,price-currentBalance);
+      const err=new Error("INSUFFICIENT_BALANCE");
+      err.shortfall=shortfall;
+      throw err;
+    }
+
+    tx.update(userRef,{
+      balance:currentBalance-price,
+      activePlan:planName,
+      planPrice:price,
+      planPurchasedAt:serverTimestamp()
+    });
+
+    tx.set(purchaseRef,{
+      uid:auth.currentUser.uid,
+      email:auth.currentUser.email||"",
+      planName,
+      amount:price,
+      status:"completed",
+      createdAt:serverTimestamp()
+    });
+  });
+
+  await refreshProfile();
+  alert(planName+" সফলভাবে কেনা হয়েছে। Wallet থেকে "+money(price)+" কাটা হয়েছে।");
+  showPage("plans");
+}catch(e){
+  if(e.message==="INSUFFICIENT_BALANCE"){
+    const shortfall=Number(e.shortfall||0);
+    selectedPlan=planName;
+    $("depositAmount").value=String(shortfall);
+    showPage("deposit");
+    message("depositMsg","এই VIP Plan কিনতে আরও "+money(shortfall)+" জমা দিতে হবে। Deposit অনুমোদনের পর আবার BUY NOW চাপুন।");
+    return;
+  }
+  console.error("VIP purchase failed:",e);
+  alert("VIP কেনা যায়নি: "+(e.message||"অনুগ্রহ করে আবার চেষ্টা করুন।"));
+}
+}
+$("vipModalClose").onclick=closeVipDetails;
+$("vipModalBackdrop").addEventListener("click",e=>{if(e.target.id==="vipModalBackdrop")closeVipDetails();});
+$("vipModalBuy").onclick=()=>purchasePlan(Number($("vipModalBuy").dataset.price||0));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeVipDetails();});
 
 $("copyNumber").onclick=async()=>{
 try{await navigator.clipboard.writeText("01980371630");alert("Nagad নম্বর কপি হয়েছে。");}
